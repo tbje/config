@@ -1,0 +1,10 @@
+(defun set-utf-8-unix ()
+  (interactive)
+  (set-buffer-file-coding-system 'utf-8-unix)
+  (save-buffer)
+)
+
+(defun read-as-dos ()
+  (interactive)
+  (revert-buffer-with-coding-system 'utf-8-dos t)
+)
