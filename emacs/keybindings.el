@@ -5,13 +5,16 @@
 (global-set-key (kbd "C-x '") 'next-error)
 (global-set-key "\C-c\C-u" 'uncomment-region)
 
-(setq x-super-keysym 'meta) ;; Use windows as meta
-(setq x-meta-keysym 'super) ;; Use alt as super
-
-
-;(setq mac-option-modifier nil
-;      mac-command-modifier 'meta
-;      x-select-enable-clipboard t)
+(pcase system-type
+  (gnu/linux 
+   (setq x-super-keysym 'meta) ;; Use windows as meta
+   (setq x-meta-keysym 'super) ;; Use alt as super
+   )
+  (darwin 
+   (setq mac-option-modifier nil
+         mac-command-modifier 'meta
+         x-select-enable-clipboard t))
+)
 
 (global-set-key (kbd "M-_") 'hippie-expand)
 
@@ -50,6 +53,7 @@
 (global-set-key "\C-c\C-e" 'send-to-console)
 
 ;; move-text
+(require 'move-text)
 (global-set-key (kbd "<M-up>") 'move-text-up)
 (global-set-key (kbd "<M-down>") 'move-text-down)
 
@@ -87,4 +91,3 @@
 (global-set-key (kbd "s-f") 'find-file-at-point-with-line)
 
 (global-set-key (kbd "s-q") 'kill-this-buffer-volatile) ;; find new 
-
