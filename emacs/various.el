@@ -9,6 +9,8 @@
 
 (add-hook 'html-mode (lambda () (local-unset-key '[160])))
 
+(setq erc-server-history-list '("https://moxie.typesafe.com:6697"))
+
 (setq redisplay-dont-pause t)
 (set-default 'truncate-lines t)
 (setq inhibit-startup-message t)
