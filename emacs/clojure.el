@@ -46,4 +46,8 @@
 
 ;(add-hook 'before-save-hook 'tbje/untabify-hook)
 
+;; (add-hook 'before-save-hook
+;;   (lambda ()
+;;     (untabify (point-min) (point-max))))
+
 ; (remove-hook 'before-save-hook)
