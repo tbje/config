@@ -1,5 +1,1 @@
 (require 'expand-region)
-(global-set-key (kbd "C-.") 'er/expand-region)
-(global-set-key (kbd "s-e") 'send-to-mysql)
-(global-set-key (kbd "s-t") '(lambda () (interactive) (ansi-term "/bin/bash")))
-(global-set-key (kbd "M-SPC") 'hippie-expand)
