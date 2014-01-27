@@ -8,6 +8,7 @@
 ;(add-to-list 'load-path "~/ensime/dist_2.9.2/elisp/")
 ;(require 'ensime)
 
+;;(add-hook 'scala-mode-hook 'sub-word-mode)
 
 ;;(setq special-display-function nil)
 ;;(setq special-display-regexps '(""))
