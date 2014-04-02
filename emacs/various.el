@@ -42,5 +42,21 @@
  ;; If there is more than one, they won't work right.
  )
 
+
+(defun ruthlessly-kill-line ()
+  "Deletes a line, but does not put it in the kill-ring. (kinda)"
+  (interactive)
+  (let (beg end)
+    (if (region-active-p)
+        (setq beg (region-beginning) end (region-end))
+      (setq beg (line-beginning-position) end (line-end-position)))
+    (if (and (eq beg end) (< end (buffer-end 1)))
+        (delete-region beg (+ 1 end))
+        (delete-region beg end))
+))
+
+(require 'yasnippet)
+(yas/load-directory "~/.emacs.d/snippets")
+
 ;;hist mode
 (savehist-mode 1)

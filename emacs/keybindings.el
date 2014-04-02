@@ -4,19 +4,32 @@
 (global-set-key "\C-c\C-c" 'comment-region)
 (global-set-key (kbd "C-x '") 'next-error)
 (global-set-key "\C-c\C-u" 'uncomment-region)
+(global-unset-key "\C-x\C-z")
 
-(pcase system-type
-  (gnu/linux 
+(when (eq system-type 'gnu/linux) 
    (setq x-super-keysym 'meta) ;; Use windows as meta
    (setq x-meta-keysym 'super) ;; Use alt as super
-   )
-  (darwin 
-   (setq mac-option-modifier nil
-         mac-command-modifier 'meta
-         x-select-enable-clipboard t))
 )
 
+(when (eq system-type 'darwin) 
+   ;; (setq mac-option-modifier nil
+   ;;       mac-command-modifier 'meta
+   ;;       mac-right-command-modifier 'super
+   ;;       mac-right-control-modifier 'super
+   ;;       mac-right-option-modifier 'super
+   ;;       x-select-enable-clipboard t))
+   ;; (setq mac-option-modifier nil
+   ;;       mac-command-modifier 'meta
+   ;;       x-select-enable-clipboard t)
+   (setq mac-option-key-is-meta t)
+   ;; To be able to write {} on norwegian keyboard.
+   (setq mac-right-option-modifier nil)
+)
+
+
 (global-set-key (kbd "M-_") 'hippie-expand)
+
+(global-set-key (kbd "s-1") 'facelift-txt-to-definintion)
 
 ;; from case-util
 (global-set-key (kbd "C-æ") 'upcase-char)
@@ -31,8 +44,6 @@
 (global-set-key "\C-b\C-r" 'recover-for-git)
 
 ;; multi-cursors
-;(global-set-key (kbd "C-<") 'mc/mark-next-like-this)
-;(global-set-key (kbd "C->") 'mc/mark-previous-like-this)
 (global-set-key (kbd "s-ø") 'mc/edit-lines)
 (global-set-key (kbd "s-æ") 'mc/mark-all-like-this)
 (global-set-key (kbd "s-å") 'mc/mark-sgml-tag-pair)
@@ -41,6 +52,7 @@
 (global-set-key (kbd "s--") 'mc/mark-next-like-this)
 (global-set-key (kbd "s-_") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-å") 'mc/mark-sgml-tag-pair)
+(global-set-key (kbd "s-@") 'mc/mark-pop)
 
 ;; sbt-console
 (global-unset-key [C-tab])
@@ -49,9 +61,14 @@
 
 (global-set-key [C-tab] 'send-tab-to-console)
 (global-set-key (kbd "C-å") 'send-to-console)
+(global-set-key (kbd "C-<") 'send-to-console)
+(global-set-key (kbd "C-z") 'send-to-console)
 (global-set-key "\C-c\C-q" 'console-quick)
+(global-unset-key (kbd "s-z"))
+(global-set-key (kbd "s-z") 'zermex-console)
 (global-set-key "\C-c\C-e" 'send-to-console)
 
+(global-set-key (kbd "s-.") 'swap-windows)
 ;; move-text
 (require 'move-text)
 (global-set-key (kbd "<M-up>") 'move-text-up)
@@ -91,3 +108,10 @@
 (global-set-key (kbd "s-f") 'find-file-at-point-with-line)
 
 (global-set-key (kbd "s-q") 'kill-this-buffer-volatile) ;; find new 
+
+(global-unset-key (kbd "s-b"))
+
+(global-set-key (kbd "s-b") 'toggle-fullscreen)
+
+(global-unset-key (kbd "s-k"))
+(global-set-key (kbd "s-k") 'ruthlessly-kill-line)
