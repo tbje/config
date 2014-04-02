@@ -5,8 +5,8 @@
 ;; ENSIME
 (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
 (add-to-list 'auto-mode-alist '("\\.console$" . scala-mode))
-;(add-to-list 'load-path "~/ensime/dist_2.9.2/elisp/")
-;(require 'ensime)
+(add-to-list 'load-path "~/ensime/dist/elisp/")
+(require 'ensime)
 
 ;;(add-hook 'scala-mode-hook 'sub-word-mode)
 
