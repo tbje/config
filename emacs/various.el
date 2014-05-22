@@ -4,7 +4,7 @@
 (setq exec-path (append exec-path '("~/bin")))
 
 (when (equal system-type 'darwin)
-  (setenv "PATH" (concat "/opt/local/bin:/usr/local/bin:" (getenv "PATH")))
+  (setenv "PATH" (concat "/opt/local/bin:/usr/local/bin:~/bin:" (getenv "PATH")))
   (push "/usr/local/bin" exec-path))
 
 (add-hook 'html-mode (lambda () (local-unset-key '[160])))

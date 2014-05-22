@@ -1,3 +1,11 @@
+
+(add-to-list 'load-path "/Users/tbje/ensime-src/dist/")
+    (require 'ensime)
+
+;; Give SBT some power
+(setenv "JVM_OPTS" 
+"-Dfile.encoding=UTF8 -XX:MaxPermSize=1g -Xms1g -Xmx2g -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC")
+
 ;; Scala mode
 (add-to-list 'load-path "~/scala-mode/")
 (require 'scala-mode-auto)
@@ -26,12 +34,12 @@
 
 (add-hook 'scala-mode-hook
           '(lambda ()
-             ;; Alternatively, bind the 'newline-and-indent' command and
-             ;; 'scala-indent:insert-asterisk-on-multiline-comment' to RET in
-             ;; order to get indentation and asterisk-insertion within multi-line
-             ;; comments.
              (unless (find-if-ensime) (message "No ensime file detected"))
-             (when (find-if-ensime) (ensime-mode 1))
+             (when (find-if-ensime) 
+               (progn 
+                 (unless (is-ensime-running-for-file (buffer-file-name))
+                   (ensime))
+                 (ensime-scala-mode-hook)))
              (yas/minor-mode-on)
              (subword-mode 1)
 ;;             (local-set-key (kbd "RET")
@@ -40,11 +48,6 @@
 ;;                               (newline-and-indent)
 ;;                               (scala-indent:insert-asterisk-on-multiline-comment)))
  
-             ;; Bind the 'join-line' command to C-M-j. This command is normally
-             ;; bound to M-^ which is hard to access, especially on some European
-             ;; keyboards. The 'join-line' command has the effect or joining the
-             ;; current line with the previous while fixing whitespace at the
-             ;; joint.
 ;             (local-set-key (kbd "C-M-j") 'join-line)
  
              ;; Bind the backtab (shift tab) to
@@ -54,12 +57,56 @@
 ;             (local-set-key (kbd "<backtab>") 'scala-indent:indent-with-reluctant-strategy)
              ))
 
+(defun restart-server ()
+  (interactive)
+  (ensime-sbt-switch)
+  (ensime-sbt-action "restart"))
+
+(defun sbt-test ()
+  (interactive)
+  (ensime-sbt-switch)
+  (ensime-sbt-action "test"))
+
+(defun ensime-generate ()
+  (interactive)
+  (ensime-sbt-switch)
+  (ensime-sbt-action "ensime generate"))
+
+(global-set-key (kbd "s-r") 'restart-server)
+
+(global-unset-key (kbd "s-t"))
+(global-set-key (kbd "s-t") 'sbt-test)
+
+
+(defun beautify-json ()
+  (interactive)
+  (let ((b (if mark-active (min (point) (mark)) (point-min)))
+        (e (if mark-active (max (point) (mark)) (point-max))))
+    (shell-command-on-region b e
+     "python -mjson.tool" (current-buffer) t)))
 
 ;; prøv å gjøre dette bedre...
 (defun ensime-servers () 
-(interactive)
-(delq nil (mapcar (lambda (b) (if (string-prefix-p "*inferior-ensime-server" (buffer-name b)) b nil)) (buffer-list)))
+  (interactive)
+  (delq nil (mapcar (lambda (b) (if (string-prefix-p "*inferior-ensime-server" (buffer-name b)) b nil)) (buffer-list)))
 )
+
+(defun find-workspace (buffer)
+  (with-current-buffer buffer 
+    (progn 
+      (beginning-of-buffer) 
+      (let ((res (re-search-forward "Using project root: ")))
+        (if res
+            (buffer-substring-no-properties res (re-search-forward "$"))
+          nil))))
+)
+
+(defun is-ensime-running-for-file (file)
+  "Returning the root dir if yes, nil if no ensime server running"
+  (let* ((ensime-servers (mapcar 'find-workspace (ensime-servers))))
+    (delq nil (mapcar (lambda (b) (if (string-prefix-p b file) b nil)) ensime-servers)))
+)
+
 
 
 ;;(setq special-display-function nil)
