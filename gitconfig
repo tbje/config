@@ -3,6 +3,7 @@
 	name = Trond Bjerkestrand
 [alias]
 	unstage = reset HEAD --
+	undo-commit = reset --soft HEAD^
 	br = branch
 	lo = log --oneline
 	bl = branch -l
