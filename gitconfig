@@ -1,0 +1,15 @@
+[user]
+	email = trond@groosker.com
+	name = Trond Bjerkestrand
+[alias]
+	unstage = reset HEAD --
+	br = branch
+	lo = log --oneline
+	bl = branch -l
+	blr = branch -lr
+	ma = checkout master
+	pick = cherry-pick
+        aliases = !git config --get-regexp 'alias.*' | colrm 1 6 | sed 's/[ ]/ = /'
+        wip = !sh -c 'git checkout -b wip-`date +"%d%m%Y-%H%M"`'
+[push]
+	default = simple
