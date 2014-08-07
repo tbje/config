@@ -11,6 +11,12 @@
 
 (setq erc-server-history-list '("https://moxie.typesafe.com:6697"))
 
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(defun save-no-hooks () "Do not remove trailing whitespaces when saving..."
+  (interactive)
+  (let ((before-save-hook (remove 'delete-trailing-whitespace before-save-hook))) (save-buffer)))
+
 (setq redisplay-dont-pause t)
 (set-default 'truncate-lines t)
 (setq inhibit-startup-message t)
