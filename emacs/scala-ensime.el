@@ -1,6 +1,5 @@
 
 (add-to-list 'load-path "~/ensime-emacs/")
-
 (require 'ensime)
 
 ;; Give SBT some power
@@ -14,9 +13,6 @@
 ;; ENSIME
 (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
 (add-to-list 'auto-mode-alist '("\\.console$" . scala-mode))
-
-(add-to-list 'load-path "~/ensime/dist/elisp/")
-(require 'ensime)
 
 (defun parent-directory (dir)
   (when (endp (member dir '("~" "/" "~/")))
