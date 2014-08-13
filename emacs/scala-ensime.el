@@ -63,6 +63,16 @@
   (ensime-sbt-switch)
   (ensime-sbt-action "restart"))
 
+(defun db-run ()
+  (interactive)
+  (ensime-sbt-switch)
+  (ensime-sbt-action "db"))
+
+(defun reload-sbt ()
+  (interactive)
+  (ensime-sbt-switch)
+  (ensime-sbt-action "reload"))
+
 (defun sbt-test ()
   (interactive)
   (ensime-sbt-switch)
@@ -71,9 +81,12 @@
 (defun ensime-generate ()
   (interactive)
   (ensime-sbt-switch)
-  (ensime-sbt-action "ensime generate"))
+  (ensime-sbt-action "ensime generate -s"))
 
 (global-set-key (kbd "s-r") 'restart-server)
+(global-set-key (kbd "s-d") 'db-run)
+;;(global-unset-key (kbd "s-y"))
+;;(global-set-key (kbd "s-y") ')
 
 (global-unset-key (kbd "s-t"))
 (global-set-key (kbd "s-t") 'sbt-test)
