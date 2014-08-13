@@ -1,6 +1,7 @@
 
-(add-to-list 'load-path "/Users/tbje/ensime-src/dist/")
-    (require 'ensime)
+(add-to-list 'load-path "~/ensime-emacs/")
+
+(require 'ensime)
 
 ;; Give SBT some power
 (setenv "JVM_OPTS"
