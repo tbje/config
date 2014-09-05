@@ -1,6 +1,6 @@
 [user]
 	email = trond@groosker.com
-	name = Trond Bjerkestrand
+	name = Trond Sandnes Bjerkestrand
 [alias]
 	unstage = reset HEAD --
 	undo-commit = reset --soft HEAD^
