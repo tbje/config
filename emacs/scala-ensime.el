@@ -7,8 +7,8 @@
 "-Dfile.encoding=UTF8 -XX:MaxPermSize=1g -Xms1g -Xmx2g -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC")
 
 ;; Scala mode
-(add-to-list 'load-path "~/scala-mode/")
-(require 'scala-mode-auto)
+;;(add-to-list 'load-path "~/scala-mode/")
+;;(require 'scala-mode-auto)
 
 ;; ENSIME
 (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
@@ -137,6 +137,25 @@
         (setq beg (region-beginning) end (region-end) nl (bolp))
       (setq beg (line-beginning-position) end (+ 1 (line-end-position)) nl nil))
     (insert (combine-imports-2 (delete-and-extract-region beg end )))
+    (insert (if nl "\n" ""))))
+
+(defun split-imports-2 (str) ""
+  (let* ((parts (split-string str "[{}]"))
+         (main (substring (car parts) 0 -1))
+         (elems (split-string (cadr parts))))
+    (mapconcat (lambda (b) (concat main "." (car (split-string b "[,]")))) elems "\n" )
+    ))
+
+(fset 'ignore-import
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([left 123 32 33554464 41 backspace 41 40 backspace backspace 41 61 backspace backspace 41 backspace 61 62 32 95 44 32 right 125 left 32 right left left left left left left left left left left left right] 0 "%d")) arg)))
+
+(defun split-imports (a b) ""
+  (interactive "r")
+  (let (beg end nl)
+    (if (region-active-p)
+        (setq beg (region-beginning) end (region-end) nl (bolp))
+      (setq beg (line-beginning-position) end (+ 1 (line-end-position)) nl nil))
+    (insert (split-imports-2 (delete-and-extract-region beg end )))
     (insert (if nl "\n" ""))))
 
 
