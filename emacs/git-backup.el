@@ -2,6 +2,12 @@
   "file name for git recovery file"
   (let ((name (file-name-sans-extension file-name))
         (ext (file-name-extension file-name)))
+    (concat name "." ext "[git]")))
+
+(defun file-name-git-recovery-old (file-name)
+  "file name for git recovery file"
+  (let ((name (file-name-sans-extension file-name))
+        (ext (file-name-extension file-name)))
     (concat name "[git]." ext)))
 
 ;;(file-name-git-recovery "file-name.txt")
@@ -20,7 +26,7 @@
   (interactive)
   (let* ((file-name (buffer-file-name))
         (backup-file-name-new (file-name-git-recovery file-name))
-        (backup-file-name-old (concat file-name "[git]"))
+        (backup-file-name-old (file-name-git-recovery-old file-name))
         (backup-file-name (if (file-exists-p backup-file-name-new) backup-file-name-new backup-file-name-old))
         (pos (point)))
     (when (not (file-exists-p backup-file-name))
