@@ -6,12 +6,12 @@
 (global-set-key "\C-c\C-u" 'uncomment-region)
 (global-unset-key "\C-x\C-z")
 
-(when (eq system-type 'gnu/linux) 
+(when (eq system-type 'gnu/linux)
    (setq x-super-keysym 'meta) ;; Use windows as meta
    (setq x-meta-keysym 'super) ;; Use alt as super
 )
 
-(when (eq system-type 'darwin) 
+(when (eq system-type 'darwin)
    ;; (setq mac-option-modifier nil
    ;;       mac-command-modifier 'meta
    ;;       mac-right-command-modifier 'super
@@ -35,6 +35,30 @@
 (global-set-key (kbd "C-æ") 'upcase-char)
 (global-set-key (kbd "M-<up>") 'move-text-up)
 (global-set-key (kbd "M-<down>") 'move-text-down)
+
+(global-set-key (kbd "C-c C-v q") 'ensime-mode)
+
+(defun insert-implicit-session () ""
+  (interactive)
+  (insert " implicit s: Session =>")
+)
+
+(global-set-key (kbd "C-c C-v i") 'insert-implicit-session)
+
+(defun insert-facelift-imports () ""
+  (interactive)
+  (insert "import com.github.tbje.facelift.imports._")
+)
+
+
+
+(global-set-key (kbd "C-c C-v i") 'insert-implicit-session)
+(global-set-key (kbd "C-c C-p f") 'insert-facelift-imports)
+(global-set-key (kbd "C-c C-p s") 'split-imports)
+(global-set-key (kbd "C-c C-p c") 'combine-imports)
+(global-set-key (kbd "C-c C-p i") 'ignore-import)
+(global-set-key (kbd "C-c C-p e") 'ediff-current-file)
+
 
 ;; git-backup
 (global-unset-key "\C-b")
@@ -79,7 +103,7 @@
 
 (global-set-key (kbd "s-e") 'send-to-mysql)
 
-;;(global-set-key (kbd "s-t") '(lambda () (interactive) (ansi-term "/bin/bash"))) 
+;;(global-set-key (kbd "s-t") '(lambda () (interactive) (ansi-term "/bin/bash")))
 (global-set-key (kbd "M-SPC") 'hippie-expand)
 
 
@@ -107,7 +131,7 @@
 
 (global-set-key (kbd "s-f") 'find-file-at-point-with-line)
 
-(global-set-key (kbd "s-q") 'kill-this-buffer-volatile) ;; find new 
+(global-set-key (kbd "s-q") 'kill-this-buffer-volatile) ;; find new
 
 (global-unset-key (kbd "s-b"))
 
