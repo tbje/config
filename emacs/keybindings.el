@@ -7,8 +7,8 @@
 (global-unset-key "\C-x\C-z")
 
 (when (eq system-type 'gnu/linux) 
-   (setq x-super-keysym 'meta) ;; Use windows as meta
-   (setq x-meta-keysym 'super) ;; Use alt as super
+   ;;(setq x-super-keysym 'meta) ;; Use windows as meta
+   ;;(setq x-meta-keysym 'super) ;; Use alt as super
 )
 
 (when (eq system-type 'darwin) 
