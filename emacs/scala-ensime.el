@@ -1,31 +1,28 @@
 
-(add-to-list 'load-path "/Users/tbje/ensime-src/dist/")
-    (require 'ensime)
+(add-to-list 'load-path "~/ensime-emacs/")
+(require 'ensime)
 
 ;; Give SBT some power
-(setenv "JVM_OPTS" 
+(setenv "JVM_OPTS"
 "-Dfile.encoding=UTF8 -XX:MaxPermSize=1g -Xms1g -Xmx2g -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC")
 
 ;; Scala mode
-(add-to-list 'load-path "~/scala-mode/")
-(require 'scala-mode-auto)
+;;(add-to-list 'load-path "~/scala-mode/")
+;;(require 'scala-mode-auto)
 
 ;; ENSIME
 (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
 (add-to-list 'auto-mode-alist '("\\.console$" . scala-mode))
 
-(add-to-list 'load-path "~/ensime/dist/elisp/")
-(require 'ensime)
-
 (defun parent-directory (dir)
   (when (endp (member dir '("~" "/" "~/")))
     (file-name-directory (directory-file-name dir))))
 
-(defun is-ensime-file (path) "" 
+(defun is-ensime-file (path) ""
   (if (endp (directory-files path nil "\.ensime$"))
       (let ((parent (parent-directory path)))
         (if parent (is-ensime-file parent) nil))
-      t)    
+      t)
 )
 
 (defun find-if-ensime () "find out if in ensime project"
@@ -38,8 +35,8 @@
 (add-hook 'scala-mode-hook
           '(lambda ()
              (unless (find-if-ensime) (message "No ensime file detected"))
-             (when (find-if-ensime) 
-               (progn 
+             (when (find-if-ensime)
+               (progn
                  (unless (is-ensime-running-for-file (buffer-file-name))
                    (ensime))
                  (ensime-scala-mode-hook)))
@@ -50,9 +47,9 @@
 ;;                               (interactive)
 ;;                               (newline-and-indent)
 ;;                               (scala-indent:insert-asterisk-on-multiline-comment)))
- 
+
 ;             (local-set-key (kbd "C-M-j") 'join-line)
- 
+
              ;; Bind the backtab (shift tab) to
              ;; 'scala-indent:indent-with-reluctant-strategy command. This is usefull
              ;; when using the 'eager' mode by default and you want to "outdent" a
@@ -65,6 +62,16 @@
   (ensime-sbt-switch)
   (ensime-sbt-action "restart"))
 
+(defun db-run ()
+  (interactive)
+  (ensime-sbt-switch)
+  (ensime-sbt-action "db"))
+
+(defun reload-sbt ()
+  (interactive)
+  (ensime-sbt-switch)
+  (ensime-sbt-action "reload"))
+
 (defun sbt-test ()
   (interactive)
   (ensime-sbt-switch)
@@ -73,9 +80,12 @@
 (defun ensime-generate ()
   (interactive)
   (ensime-sbt-switch)
-  (ensime-sbt-action "ensime generate"))
+  (ensime-sbt-action "ensime generate -s"))
 
 (global-set-key (kbd "s-r") 'restart-server)
+(global-set-key (kbd "s-d") 'db-run)
+;;(global-unset-key (kbd "s-y"))
+;;(global-set-key (kbd "s-y") ')
 
 (global-unset-key (kbd "s-t"))
 (global-set-key (kbd "s-t") 'sbt-test)
@@ -89,15 +99,15 @@
      "python -mjson.tool" (current-buffer) t)))
 
 ;; prøv å gjøre dette bedre...
-(defun ensime-servers () 
+(defun ensime-servers ()
   (interactive)
   (delq nil (mapcar (lambda (b) (if (string-prefix-p "*inferior-ensime-server" (buffer-name b)) b nil)) (buffer-list)))
 )
 
 (defun find-workspace (buffer)
-  (with-current-buffer buffer 
-    (progn 
-      (beginning-of-buffer) 
+  (with-current-buffer buffer
+    (progn
+      (beginning-of-buffer)
       (let ((res (re-search-forward "Using project root: ")))
         (if res
             (buffer-substring-no-properties res (re-search-forward "$"))
@@ -110,6 +120,43 @@
     (delq nil (mapcar (lambda (b) (if (string-prefix-p b file) b nil)) ensime-servers)))
 )
 
+(defun is-empty (str) "true if empty" (if (or (string-equal str "") (string-equal str " ")) nil str ))
+
+(defun combine-imports-2 (str) ""
+  (let* ((lines (split-string str "\n"))
+         (non-empty (delq nil (mapcar 'is-empty lines)))
+         (first (split-string (car non-empty) "[\.]")))
+    (concat (mapconcat 'identity (butlast first ) ".") ".{ " (car (last first)) ", "
+    (mapconcat (lambda (b) (car (last (split-string b "[\.]")))) (cdr non-empty) ", " ) " }")
+    ))
+
+(defun combine-imports (a b) ""
+  (interactive "r")
+  (let (beg end nl)
+    (if (region-active-p)
+        (setq beg (region-beginning) end (region-end) nl (bolp))
+      (setq beg (line-beginning-position) end (+ 1 (line-end-position)) nl nil))
+    (insert (combine-imports-2 (delete-and-extract-region beg end )))
+    (insert (if nl "\n" ""))))
+
+(defun split-imports-2 (str) ""
+  (let* ((parts (split-string str "[{}]"))
+         (main (substring (car parts) 0 -1))
+         (elems (split-string (cadr parts))))
+    (mapconcat (lambda (b) (concat main "." (car (split-string b "[,]")))) elems "\n" )
+    ))
+
+(fset 'ignore-import
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([left 123 32 33554464 41 backspace 41 40 backspace backspace 41 61 backspace backspace 41 backspace 61 62 32 95 44 32 right 125 left 32 right left left left left left left left left left left left right] 0 "%d")) arg)))
+
+(defun split-imports (a b) ""
+  (interactive "r")
+  (let (beg end nl)
+    (if (region-active-p)
+        (setq beg (region-beginning) end (region-end) nl (bolp))
+      (setq beg (line-beginning-position) end (+ 1 (line-end-position)) nl nil))
+    (insert (split-imports-2 (delete-and-extract-region beg end )))
+    (insert (if nl "\n" ""))))
 
 
 ;;(setq special-display-function nil)
@@ -122,15 +169,15 @@
 
 ;;(setq display-special-buffer nil)
 
-;;(defun 
-;;  (universal-coding-system-argument 
+;;(defun
+;;  (universal-coding-system-argument
 ;;  set-buffer-file-coding-system
 
 ;; (defun display-special-buffer (buf &optional not-this-window)
 ;;   "put the special buffers in the right spot (bottom rigt)"
 ;;  (message "Special buffer")
 ;;  ;;(message (window-list))
-;;  (if (eq (window-at 2 2) (window-at (- (frame-width) 4) 2)) 
+;;  (if (eq (window-at 2 2) (window-at (- (frame-width) 4) 2))
 ;;    (split-window-horizontally -30)
 ;;  )
 ;;     (let ((target-window (window-at (- (frame-width) 4) 2))
