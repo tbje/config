@@ -7,8 +7,8 @@
 "-Dfile.encoding=UTF8 -XX:MaxPermSize=1g -Xms1g -Xmx2g -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC")
 
 ;; Scala mode
-;;(add-to-list 'load-path "~/scala-mode/")
-;;(require 'scala-mode-auto)
+(add-to-list 'load-path "~/scala-mode2/")
+(require 'scala-mode2)
 
 ;; ENSIME
 (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
