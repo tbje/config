@@ -12,36 +12,44 @@
 
 ;; ENSIME
 (add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
-(add-to-list 'auto-mode-alist '("\\.console$" . scala-mode))
+;;(add-to-list 'auto-mode-alist '("\\.console$" . scala-mode))
 
 (defun parent-directory (dir)
   (when (endp (member dir '("~" "/" "~/")))
     (file-name-directory (directory-file-name dir))))
 
+(defun is-project-file (full-file-name) "Find out if file is in the sbt project dir (== project)"
+  (string= (file-name-nondirectory (substring (file-name-directory full-file-name) 0 -1)) "project"))
+
 (defun is-ensime-file (path) ""
   (if (endp (directory-files path nil "\.ensime$"))
       (let ((parent (parent-directory path)))
         (if parent (is-ensime-file parent) nil))
-      t)
-)
+      t))
 
 (defun find-if-ensime () "find out if in ensime project"
   (interactive)
-  (message "find is ensime running on %s %s" (buffer-name) (buffer-file-name))
   (let ((current-file (buffer-file-name)))
-    (if (and current-file (file-exists-p current-file)) (is-ensime-file (parent-directory current-file)) nil))
-)
+    (if (and current-file (file-exists-p current-file)) (is-ensime-file (parent-directory current-file)) nil)))
 
+(defun find-ensime-cofnig-file () ""
+  (interactive)
+  (message "%s" (ensime-config-find-file (buffer-file-name))))
+
+;;
+(setq scala-mode-hook nil)
 (add-hook 'scala-mode-hook
           '(lambda ()
              (unless (find-if-ensime) (message "No ensime file detected"))
              (when (find-if-ensime)
                (progn
-                 (unless (is-ensime-running-for-file (buffer-file-name))
-                   (ensime))
-                 (ensime-scala-mode-hook)))
+                 (unless (ensime-connected-p) ;; (buffer-file-name)
+                   (message "Ensime not running for %s" (ensime-connected-p))
+                   (ensime--2 (ensime-config-find-file (buffer-file-name)))) ;; TODO: Try to find ensime file and use it, if not drop it.
+                 (ensime-mode)))
              (yas/minor-mode-on)
-             (subword-mode 1)
+             (subword-mode 1)))
+
 ;;             (local-set-key (kbd "RET")
 ;;                            '(lambda ()
 ;;                               (interactive)
@@ -55,7 +63,6 @@
              ;; when using the 'eager' mode by default and you want to "outdent" a
              ;; code line as a new statement.
 ;             (local-set-key (kbd "<backtab>") 'scala-indent:indent-with-reluctant-strategy)
-             ))
 
 (defun restart-server ()
   (interactive)
@@ -108,11 +115,11 @@
   (with-current-buffer buffer
     (progn
       (beginning-of-buffer)
-      (let ((res (re-search-forward "Using project root: ")))
+      (let ((res (re-search-forward "Set current project to root--ensime")))
+        (message "ff::: %s||" res)
         (if res
             (buffer-substring-no-properties res (re-search-forward "$"))
-          nil))))
-)
+          nil)))))
 
 (defun is-ensime-running-for-file (file)
   "Returning the root dir if yes, nil if no ensime server running"
