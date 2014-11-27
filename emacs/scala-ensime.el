@@ -36,8 +36,15 @@
   (interactive)
   (message "%s" (ensime-config-find-file (buffer-file-name))))
 
-;;
-(setq scala-mode-hook nil)
+
+(defun ensime-delete-port-file ()
+  (let* ((config-file (ensime-config-find-file (buffer-file-name)))
+         (config (ensime-config-load config-file))
+         (cache-dir (file-name-as-directory (plist-get config :cache-dir)))
+         (port-file (concat cache-dir "port")))
+    (delete-file port-file)))
+
+;;(setq scala-mode-hook nil)
 (add-hook 'scala-mode-hook
           '(lambda ()
              (unless (find-if-ensime) (message "No ensime file detected"))
