@@ -1,0 +1,49 @@
+!URxvt.depth: 32
+*background: #0f0f0f
+*foreground: #c8c8c8
+!-- Xft settings -- !
+Xft.dpi:        96
+Xft.antialias:  true
+Xft.rgba:       rgb
+Xft.hinting:    true
+Xft.hintstyle:  hintslight
+! -- Fonts -- !
+URxvt*font: xft:DejaVu Sans Mono:pixelsize=20
+
+!black
+*color0:  #251f1f
+*color8:  #5e5e5e
+!red
+*color1:  #eb4509
+*color9:  #eb4509
+!green
+*color2:  #94e76b
+*color10: #95e76b
+!yellow
+*color3:  #ffac18
+*color11: #ffac18
+!blue
+*color4:  #46aede
+*color12: #46aede
+!magenta
+*color5:  #e32c57
+*color13: #e32c57
+!cyan
+*color6:  #d6dbac
+*color14: #d6dbac
+!white
+*color7:  #efefef
+
+
+XClock*foreground: #fbfbfb
+XClock*background: #000018
+XClock*face: xft:DejaVu Sans Mono:pixelsize=60
+XClock*update: 1
+XClock*strftime: %T
+XClock*analog: false
+XClock*geometry:          210x210+1020+12
+XClock.Clock.majorColor:  rgba:f0/f0/19/7b
+XClock.Clock.minorColor:  rgba:a0/c0/f0/c0
+XClock.Clock.hourColor:   rgba:c9/66/11/72
+XClock.Clock.minuteColor: rgba:00/82/9f/72
+XClock.Clock.secondColor: rgba:50/93/30/6f

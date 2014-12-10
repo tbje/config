@@ -1,0 +1,11 @@
+keycode 61 = minus underscore minus underscore greater less
+keycode 60 = period colon period colon less
+keycode 17 = 8 parenleft 8 parenleft bracketleft braceleft bracketleft braceleft  
+keycode 18 = 9 parenright 9 parenright bracketright braceright  bracketright braceright
+remove lock = Caps_Lock
+remove control = Control_L
+keycode 66 = Control_L NoSymbol Control_L
+keycode 9 = Caps_Lock NoSymbol Caps_Lock
+keycode 37 = Escape NoSymbol Escape
+add lock = Caps_Lock
+add control = Control_L
