@@ -139,3 +139,7 @@
 
 (global-unset-key (kbd "s-k"))
 (global-set-key (kbd "s-k") 'ruthlessly-kill-line)
+
+(require 'smooth-scroll)
+(global-set-key (kbd "s-ø") 'scroll-down-1)
+(global-set-key (kbd "s-æ") 'scroll-up-1)
