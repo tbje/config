@@ -17,7 +17,7 @@
   (ew-int "Go to" ""))
 
 (defun ew-int (prompt what)
-  (let* ((killed (current-kill 0 nil))
+  (let* ((killed (or (ignore-errors (current-kill 0 nil)) ""))
          (url
           (if (region-active-p)
               (buffer-substring (region-beginning) (region-end))
