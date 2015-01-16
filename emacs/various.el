@@ -61,8 +61,29 @@
         (delete-region beg end))
 ))
 
+
+(defun auto-revert-open (f)
+  (with-current-buffer (find-file f)
+    (auto-revert-mode)
+    (end-of-buffer)))
+
+
 (require 'yasnippet)
 (yas/load-directory "~/.emacs.d/snippets")
 
 ;;hist mode
 (savehist-mode 1)
+
+
+(defun git-logb ()
+  (git-log-other (git--select-branch)))
+
+(defun git-logob ()
+  (git-log-other (git--select-remote "Select remote: ")))
+
+(defun project ()
+  (cd (concat "~/" (ido-completing-read "Project: " '("config") nil nil nil nil nil))))
+
+(defun git-pr (br)
+  "create a pull request against amc-develop"
+  (concat "http://git/efgfp/teleios/compare/amc-develop..." br "?expand=1"))
