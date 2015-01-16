@@ -87,3 +87,7 @@
 (defun git-pr (br)
   "create a pull request against amc-develop"
   (concat "http://git/efgfp/teleios/compare/amc-develop..." br "?expand=1"))
+
+(defun git-log-dir (dir)
+  (let ((default-directory dir))
+    (git-log)))
