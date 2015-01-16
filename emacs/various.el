@@ -21,7 +21,7 @@
 (set-default 'truncate-lines t)
 (setq inhibit-startup-message t)
 
-(desktop-save-mode 1)
+;;(desktop-save-mode 1)
 
 (eval-after-load "dired"
   '(progn
