@@ -2,13 +2,13 @@
 (setq eshell-prompt-regexp "^.* λ ")
 
 ;;; Select a random sig as the eshell banner.
-(let ((sigfile (concat *my-pim-dir* "signatures")))
-  (when (file-exists-p sigfile)
-    (let ((sigs (with-temp-buffer
-                  (insert-file-contents sigfile)
-                  (split-string (buffer-string) "\n\n" t))))
-      (setq eshell-banner-message
-            (concat (nth (random (length sigs)) sigs) "\n\n")))))
+;; (let ((sigfile (concat *my-pim-dir* "signatures")))
+;;   (when (file-exists-p sigfile)
+;;     (let ((sigs (with-temp-buffer
+;;                   (insert-file-contents sigfile)
+;;                   (split-string (buffer-string) "\n\n" t))))
+;;       (setq eshell-banner-message
+;;             (concat (nth (random (length sigs)) sigs) "\n\n")))))
 
 (require 'em-hist)			; So the history vars are defined
 (if (boundp 'eshell-save-history-on-exit)
@@ -35,8 +35,6 @@
   "Returns true if we're in a git repository."
   (not (string-match-p "fatal*" (shell-command-to-string "git rev-parse HEAD"))))
 
-(catch (string-match-p "fatal*" (git--rev-parse "HEAD"))))
-  
 (defun curr-dir-git-branch-string (pwd)
   "Returns current git branch as a string, or the empty string if
 PWD is not in a git repo (or the git command is not found)."
