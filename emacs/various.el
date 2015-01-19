@@ -81,12 +81,31 @@
 (defun git-logob ()
   (git-log-other (git--select-remote "Select remote: ")))
 
-(defun project ()
-  (cd (concat "~/" (ido-completing-read "Project: " '("config") nil nil nil nil nil))))
+(defcustom my-projects
+  '()
+  "A list with name and dir for projects."
+  :type 'list
+  :group 'personal)
 
-(defun git-pr (br)
-  "create a pull request against amc-develop"
-  (concat "http://git/efgfp/teleios/compare/amc-develop..." br "?expand=1"))
+(defcustom pr-urls
+  '()
+  "A list with dir name pull request url for each project.
+   Example: '((\"~/zermex-site\" . \"https://github/git/Groosker/zermex-site\")"
+  :type 'list
+  :group 'personal)
+
+
+(defun project ()
+  (let ((chosen (ido-completing-read "Project: " (mapcar 'car my-projects) nil nil nil nil nil)))
+    (cd (cdr (assoc chosen my-projects)))))
+
+(defun git-pr ()
+  "Create a pull request against develop branch (master if not configured in pr-urls)"
+  (let* ((top-dir (abbreviate-file-name (git--get-top-dir)))
+         (github-data (cdr (assoc top-dir pr-urls)))
+         (github-url (if (consp github-data) (car github-data) github-data))
+         (github-merge (if (consp github-data) (cdr github-data) "master")))
+    (concat github-url "/compare/" github-merge "..." (git--current-branch) "?expand=1")))
 
 (defun git-log-dir (dir)
   (let ((default-directory dir))
