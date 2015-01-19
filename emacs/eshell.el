@@ -48,7 +48,6 @@ PWD is not in a git repo (or the git command is not found)."
                 "(no branch)")
               "] "))))
 
-
 (setq eshell-prompt-function
       (lambda ()
         (concat
@@ -71,3 +70,9 @@ PWD is not in a git repo (or the git command is not found)."
                          "/")))
           (split-string (pwd-repl-home (eshell/pwd)) "/"))
          " λ ")))
+
+(add-hook 'eshell-mode-hook
+          '(lambda nil
+             (eshell/export "EDITOR=emacsclient -n")
+             (eshell/export "VISUAL=emacsclient -n")
+             (eshell/eval "ssh-agent")))
