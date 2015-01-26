@@ -143,3 +143,55 @@
 (require 'smooth-scroll)
 (global-set-key (kbd "s-ø") 'scroll-down-1)
 (global-set-key (kbd "s-æ") 'scroll-up-1)
+
+
+(global-set-key (kbd "<f5>") 'revert-buffer)
+(global-set-key (kbd "<f6>") 'scala-rgrep)
+(global-set-key (kbd "M-<f6>") 'play-template-rgrep)
+(global-set-key (kbd "M-<f7>") 'case-class-rgrep)
+(global-set-key (kbd "s-<f6>") 'js-rgrep)
+(global-set-key (kbd "<f12>") 'toggle-read-only)
+(global-set-key (kbd "M-<f11>") 'other-frame-or-create)
+
+(defun other-frame-or-create () "Moves to the other frame or creates one if only one frame"
+       (interactive)
+       (let ((frames (frame-list)))
+         (if (eq 1 (length frames)) (make-frame) (other-frame 1))))
+
+(defun find-string-for-search (active start end) ""
+       (interactive)
+       (if active
+           (buffer-substring-no-properties start end)
+         (read-from-minibuffer "Search for: ")))
+
+(defun case-class-rgrep (start end)
+  "Print number of lines and characters in the region."
+  (interactive "r")
+  (let ((search (find-string-for-search (region-active-p) start end)))
+    (rgrep (concat "case class " search "[ (]") "*.scala" "~/teleios")
+    (switch-to-buffer-other-frame "*grep*")
+    (set-process-sentinel (get-buffer-process (current-buffer)) 'next-error)))
+
+(defun next-error-and-close (a b)
+  (let ((b (current-buffer)))
+    (next-error)
+    (kill-buffer b)))
+
+(defun scala-rgrep (start end)
+  "Print number of lines and characters in the region."
+  (interactive "r")
+  (let ((search (find-string-for-search (region-active-p) start end)))
+    (rgrep search "*.scala" "~/teleios")))
+
+(defun play-template-rgrep (start end)
+  "Print number of lines and characters in the region."
+  (interactive "r")
+  (let ((search (find-string-for-search (region-active-p) start end)))
+    (rgrep search "*.scala.html" "~/teleios/teleios-advisor-web/app")))
+
+(defun js-rgrep (start end)
+  "Print number of lines and characters in the region."
+  (interactive "r")
+  (let ((search (find-string-for-search (region-active-p) start end)))
+    (message search)
+    (rgrep search "*.js" "~/teleios/teleios-advisor-web/app")))
