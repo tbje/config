@@ -1,10 +1,18 @@
-(global-unset-key "\C-c\C-u")
-(global-set-key "\C-c\C-u" 'uncomment-region)
-(global-unset-key "\C-c\C-c")
-(global-set-key "\C-c\C-c" 'comment-region)
+(global-unset-key (kbd "C-c C-u"))
+(global-unset-key (kbd "C-c C-c"))
+(global-unset-key (kbd "C-x C-z"))
+(global-set-key (kbd "C-c C-u") 'uncomment-region)
+(global-set-key (kbd "C-c C-c") 'comment-region)
 (global-set-key (kbd "C-x '") 'next-error)
-(global-set-key "\C-c\C-u" 'uncomment-region)
-(global-unset-key "\C-x\C-z")
+
+(global-set-key (kbd "C-c C-q") 'shut-down-cmd)
+(global-set-key (kbd "C-c C-d p") 'ensime-sbt-do-compile)
+
+(global-set-key (kbd "C-c g") 'google)
+(global-set-key (kbd "C-c b") 'helm-bookmarks)
+(global-set-key (kbd "C-c c") 'find-config)
+(global-set-key (kbd "C-c f") 'helm-find-files)
+(global-set-key (kbd "C-c w") 'eww)
 
 (when (eq system-type 'gnu/linux)
    ;;(setq x-super-keysym 'meta) ;; Use windows as meta
@@ -58,6 +66,7 @@
 (global-set-key (kbd "C-c C-p c") 'combine-imports)
 (global-set-key (kbd "C-c C-p i") 'ignore-import)
 (global-set-key (kbd "C-c C-p e") 'ediff-current-file)
+(global-set-key (kbd "C-c C-e") 'eval-and-replace)
 
 
 ;; git-backup
