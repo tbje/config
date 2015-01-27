@@ -13,6 +13,17 @@
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
+
+(defun eval-and-replace ()
+  "Replace the preceding sexp with its value."
+  (interactive)
+  (backward-kill-sexp)
+  (condition-case nil
+      (prin1 (eval (read (current-kill 0)))
+             (current-buffer))
+    (error (message "Invalid expression")
+           (insert (current-kill 0)))))
+
 (defun save-no-hooks () "Do not remove trailing whitespaces when saving..."
   (interactive)
   (let ((before-save-hook (remove 'delete-trailing-whitespace before-save-hook))) (save-buffer)))
@@ -91,10 +102,33 @@
   :type 'list
   :group 'personal)
 
-
 (defun project ()
-  (let ((chosen (ido-completing-read "Project: " (mapcar 'car my-projects) nil nil nil nil nil)))
-    (cd (cdr (assoc chosen my-projects)))))
+  (interactive)
+  (helm :prompt "Project: " :sources '(
+  ((name . "Jump to project")
+    (candidates . my-projects)
+    (action . (
+               ("Jump" .       (lambda (dir) (cd dir)))
+               ("Git status" . (lambda (dir) (git-status dir)))
+               ("Git log" .    (lambda (dir) (git-log dir)))
+               ))))))
+
+(defun branches ()
+  (interactive)
+  (helm :prompt "Branch: " :sources `(
+  ((name . "Jump to project")
+    (candidates . ,(helm-branches default-directory))
+    (action . (
+               ("Return" .       (lambda (dir) (cd dir)))
+               ("Git log" .    (lambda (b) (git-log-other b)))
+               ))))))
+
+(defun cons-same (a) `(,a . ,a))
+
+(defun helm-branches (dir)
+  (with-helm-default-directory dir
+      (mapcar 'cons-same (car (git--branch-list)))))
+
 
 (defun git-pr ()
   "Create a pull request against develop branch (master if not configured in pr-urls)"
@@ -109,21 +143,18 @@
     (git-log)))
 
 
-(defun same-assoc (a)
-  `(,a . ,a))
-
 (defun helm-scala-complete ()
   (interactive)
-  (let* ((cand  (mapcar 'same-assoc '("import scala.concurrent._"
-                                      "import com.github.tbje.facelift.imports._"
-                                      "implicit s: Session =>"
-                                      "import scalaz._\nimport scalaz.Scalaz._"
-                                      "import com.github.nscala_time.time.Imports._"
-                                      "import concurrent.ExecutionContext.Implicits.global"
-                                      "import com.efgfp.teleios.util._")))
-         (src2   '((name . "Scala common")
-                   (candidates . cand)
-                   (action . (("paste" . (lambda (x) x)))))))
-    (insert (helm :sources src2
-          :prompt "Select scala thing:"
+  (let* ((cand  (mapcar 'cons-same '("import scala.concurrent._"
+                                     "import com.github.tbje.facelift.imports._"
+                                     "implicit s: Session =>"
+                                     "import scalaz._\nimport scalaz.Scalaz._"
+                                     "import com.github.nscala_time.time.Imports._"
+                                     "import concurrent.ExecutionContext.Implicits.global"
+                                     "import com.efgfp.teleios.util._")))
+         (sources   '((name . "Scala common")
+                      (candidates . cand)
+                      (action . (("paste" . (lambda (x) x)))))))
+    (insert (helm :sources sources
+          :prompt "Select scala completion:"
           :buffer "*helm-spotify*"))))
