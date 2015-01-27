@@ -13,6 +13,17 @@
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
+
+(defun eval-and-replace ()
+  "Replace the preceding sexp with its value."
+  (interactive)
+  (backward-kill-sexp)
+  (condition-case nil
+      (prin1 (eval (read (current-kill 0)))
+             (current-buffer))
+    (error (message "Invalid expression")
+           (insert (current-kill 0)))))
+
 (defun save-no-hooks () "Do not remove trailing whitespaces when saving..."
   (interactive)
   (let ((before-save-hook (remove 'delete-trailing-whitespace before-save-hook))) (save-buffer)))
@@ -94,10 +105,33 @@
   :type 'list
   :group 'personal)
 
-
 (defun project ()
-  (let ((chosen (ido-completing-read "Project: " (mapcar 'car my-projects) nil nil nil nil nil)))
-    (cd (cdr (assoc chosen my-projects)))))
+  (interactive)
+  (helm :prompt "Project: " :sources '(
+  ((name . "Jump to project")
+    (candidates . my-projects)
+    (action . (
+               ("Jump" .       (lambda (dir) (cd dir)))
+               ("Git status" . (lambda (dir) (git-status dir)))
+               ("Git log" .    (lambda (dir) (git-log dir)))
+               ))))))
+
+(defun branches ()
+  (interactive)
+  (helm :prompt "Branch: " :sources `(
+  ((name . "Jump to project")
+    (candidates . ,(helm-branches default-directory))
+    (action . (
+               ("Return" .       (lambda (dir) (cd dir)))
+               ("Git log" .    (lambda (b) (git-log-other b)))
+               ))))))
+
+(defun cons-same (a) `(,a . ,a))
+
+(defun helm-branches (dir)
+  (with-helm-default-directory dir
+      (mapcar 'cons-same (car (git--branch-list)))))
+
 
 (defun git-pr ()
   "Create a pull request against develop branch (master if not configured in pr-urls)"
