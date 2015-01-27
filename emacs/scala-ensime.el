@@ -51,10 +51,10 @@
              (when (find-if-ensime)
                (progn
                  (unless (ensime-connected-p) ;; (buffer-file-name)
-                   (message "Ensime not running for %s" (ensime-connected-p))
-                   (ensime--2 (ensime-config-find-file (buffer-file-name)))) ;; TODO: Try to find ensime file and use it, if not drop it.
+                   (message "Ensime not running for %s" (ensime-connected-p)))
+                   ;;(ensime--2 (ensime-config-find-file (buffer-file-name)))) ;; TODO: Try to find ensime file and use it, if not drop it.
                  (ensime-mode)))
-             (yas/minor-mode-on)
+             ;;(yas-minor-mode)
              (subword-mode 1)))
 
 ;;             (local-set-key (kbd "RET")
@@ -172,6 +172,13 @@
     (insert (split-imports-2 (delete-and-extract-region beg end )))
     (insert (if nl "\n" ""))))
 
+(defun extract-package ()
+  (interactive)
+  (let* ((dir default-directory)
+         (pname (replace-regexp-in-string "\/" "." dir)))
+    (insert (concat "packate " pname))))
+
+(global-set-key (kbd "C-c p") 'extract-package)
 
 ;;(setq special-display-function nil)
 ;;(setq special-display-regexps '(""))
