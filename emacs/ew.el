@@ -2,10 +2,12 @@
   (interactive)
   (bmkp-url-target-set eww-current-url 1 (replace-regexp-in-string "\n" " - " eww-current-title)))
 
+(defcustom avoid-https nil "Use rather http than https for proxy reasons" :type 'boolean :group 'personal)
+
 (defun google ()
   "Search google.com"
   (interactive)
-  (ew-int "Search google" "https://www.google.ch/search?q="))
+  (ew-int "Search google" (concat (if avoid-https "http" "https") "://www.google.ch/search?q=" )))
 
 (defun search ()
   "Search duck duck go"
