@@ -68,11 +68,8 @@
     (end-of-buffer)))
 
 
-(require 'yasnippet)
-(yas/load-directory "~/.emacs.d/snippets")
-
 ;;hist mode
-(savehist-mode 1)
+;;(savehist-mode 1)
 
 
 (defun git-logb ()
@@ -110,3 +107,23 @@
 (defun git-log-dir (dir)
   (let ((default-directory dir))
     (git-log)))
+
+
+(defun same-assoc (a)
+  `(,a . ,a))
+
+(defun helm-scala-complete ()
+  (interactive)
+  (let* ((cand  (mapcar 'same-assoc '("import scala.concurrent._"
+                                      "import com.github.tbje.facelift.imports._"
+                                      "implicit s: Session =>"
+                                      "import scalaz._\nimport scalaz.Scalaz._"
+                                      "import com.github.nscala_time.time.Imports._"
+                                      "import concurrent.ExecutionContext.Implicits.global"
+                                      "import com.efgfp.teleios.util._")))
+         (src2   '((name . "Scala common")
+                   (candidates . cand)
+                   (action . (("paste" . (lambda (x) x)))))))
+    (insert (helm :sources src2
+          :prompt "Select scala thing:"
+          :buffer "*helm-spotify*"))))
