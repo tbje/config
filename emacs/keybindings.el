@@ -13,6 +13,7 @@
 (global-set-key (kbd "C-c c") 'find-config)
 (global-set-key (kbd "C-c f") 'helm-find-files)
 (global-set-key (kbd "C-c w") 'eww)
+(global-set-key (kbd "C-c i") 'helm-scala-complete)
 
 (when (eq system-type 'gnu/linux)
    ;;(setq x-super-keysym 'meta) ;; Use windows as meta
@@ -45,36 +46,18 @@
 (global-set-key (kbd "M-<down>") 'move-text-down)
 
 (global-set-key (kbd "C-c C-v q") 'ensime-mode)
-
-(defun insert-implicit-session () ""
-  (interactive)
-  (insert " implicit s: Session =>")
-)
-
-(global-set-key (kbd "C-c C-v i") 'insert-implicit-session)
-
-(defun insert-facelift-imports () ""
-  (interactive)
-  (insert "import com.github.tbje.facelift.imports._")
-)
-
-
-
-(global-set-key (kbd "C-c C-v i") 'insert-implicit-session)
-(global-set-key (kbd "C-c C-p f") 'insert-facelift-imports)
 (global-set-key (kbd "C-c C-p s") 'split-imports)
 (global-set-key (kbd "C-c C-p c") 'combine-imports)
 (global-set-key (kbd "C-c C-p i") 'ignore-import)
 (global-set-key (kbd "C-c C-p e") 'ediff-current-file)
 (global-set-key (kbd "C-c C-e") 'eval-and-replace)
 
-
 ;; git-backup
-(global-unset-key "\C-b")
-(global-unset-key "\C-b\C-b")
-(global-unset-key "\C-b\C-r")
-(global-set-key "\C-b\C-b" 'backup-for-git)
-(global-set-key "\C-b\C-r" 'recover-for-git)
+(global-unset-key (kbd "C-b")
+(global-unset-key (kbd "C-b C-b"))
+(global-unset-key (kbd "C-b C-r"))
+(global-set-key (kbd "C-b C-b") 'backup-for-git)
+(global-set-key (kbd "C-b C-r") 'recover-for-git)
 
 ;; multi-cursors
 (global-set-key (kbd "s-ø") 'mc/edit-lines)
@@ -115,13 +98,11 @@
 ;;(global-set-key (kbd "s-t") '(lambda () (interactive) (ansi-term "/bin/bash")))
 (global-set-key (kbd "M-SPC") 'hippie-expand)
 
-
-(global-unset-key "\C-c\C-u")
-(global-set-key "\C-c\C-u" 'uncomment-region)
-(global-unset-key "\C-c\C-c")
-(global-set-key "\C-c\C-c" 'comment-region)
+(global-unset-key (kbd "C-c C-c"))
+(global-unset-key (kbd "C-c C-u"))
+(global-set-key (kbd "C-c C-c") 'comment-region)
+(global-set-key (kbd "C-c C-u") 'uncomment-region)
 (global-set-key (kbd "C-x '") 'next-error)
-(global-set-key "\C-c\C-u" 'uncomment-region)
 
 (global-set-key (kbd "s-g") 'rgrep)
 
