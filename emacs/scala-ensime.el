@@ -4,7 +4,7 @@
 
 ;; Give SBT some power
 (setenv "JVM_OPTS"
-"-Dfile.encoding=UTF8 -XX:MaxPermSize=1g -Xms1g -Xmx2g -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC")
+"-Dfile.encoding=UTF8 -XX:MaxPermSize=2g -Xms1g -Xmx2g -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC")
 
 ;; Scala mode
 (add-to-list 'load-path "~/scala-mode2/")

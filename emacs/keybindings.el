@@ -5,6 +5,8 @@
 (global-set-key (kbd "C-c C-c") 'comment-region)
 (global-set-key (kbd "C-x '") 'next-error)
 
+(defun shut-down-cmd () "" (interactive)(shell-command "power-off"))
+
 (global-set-key (kbd "C-c C-q") 'shut-down-cmd)
 (global-set-key (kbd "C-c C-d p") 'ensime-sbt-do-compile)
 
@@ -14,6 +16,9 @@
 (global-set-key (kbd "C-c f") 'helm-find-files)
 (global-set-key (kbd "C-c w") 'eww)
 (global-set-key (kbd "C-c i") 'helm-scala-complete)
+(global-set-key (kbd "C-c e") 'eshell)
+(global-set-key (kbd "C-c p") 'helm-browse-project)
+(global-set-key (kbd "M-x") 'helm-M-x)
 
 (when (eq system-type 'gnu/linux)
    ;;(setq x-super-keysym 'meta) ;; Use windows as meta
@@ -35,6 +40,14 @@
    (setq mac-right-option-modifier nil)
 )
 
+(defun find-fast-term (active start end) ""
+  (if active (buffer-substring-no-properties start end) (read-from-minibuffer "Search for: ")))
+
+(defun find-fast (start end) ""
+  (interactive "r")
+    (rgrep (find-fast-term (region-active-p) start end) "*.scala" "~/zermex-site"))
+
+(global-set-key (kbd "<f6>") 'find-fast)
 
 (global-set-key (kbd "M-_") 'hippie-expand)
 
@@ -73,7 +86,6 @@
 ;; sbt-console
 (global-unset-key [C-tab])
 (global-unset-key "\C-c\C-q")
-(global-unset-key "\C-c\C-e")
 
 (global-set-key [C-tab] 'send-tab-to-console)
 (global-set-key (kbd "C-å") 'send-to-console)
@@ -81,8 +93,17 @@
 (global-set-key (kbd "C-z") 'send-to-console)
 (global-set-key "\C-c\C-q" 'console-quick)
 (global-unset-key (kbd "s-z"))
-(global-set-key (kbd "s-z") 'zermex-console)
-(global-set-key "\C-c\C-e" 'send-to-console)
+(global-set-key (kbd "s-z") 'console-quick)
+
+(global-unset-key (kbd "<f10>"))
+(global-unset-key (kbd "<f11>"))
+(global-unset-key (kbd "<f12>"))
+(global-set-key (kbd "<f10>") 'bufshow-prev)
+(global-set-key (kbd "<f11>") 'bufshow-next)
+(global-set-key (kbd "<f12>") 'toggle-read-only)
+
+;;(global-set-key (kbd "s-z") 'zermex-console)
+(global-set-key (kbd "s-z") 'ensime-sbt)
 
 (global-set-key (kbd "s-.") 'swap-windows)
 ;; move-text

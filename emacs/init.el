@@ -7,3 +7,7 @@
 (setq inhibit-splash-screen t)
 
 (display-time)
+
+(eshell)
+
+(split-window-vertically)

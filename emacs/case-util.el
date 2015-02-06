@@ -4,6 +4,13 @@
    (point)
    (+ (point) 1)))
 
+(defun increase-left-margin ()
+  (interactive)
+  (set-variable 'left-margin (+ 1 left-margin)))
+
+(global-set-key (kbd "s-p s-+") 'increase-left-margin)
+
+
 
 (defun yank-word (&optional arg)
       "Copy words at point into kill-ring"
@@ -21,7 +28,7 @@
 
 (defun camelize (string is-method)
       "Convert under-score string S to camelCase string."
-      (mapconcat 'identity 
+      (mapconcat 'identity
         (let* ((c (split-string string "-"))
               (first (if is-method (car c) ()))
               (rest (if is-method (cdr c) c)))

@@ -10,10 +10,12 @@ myModMask = mod4Mask
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
              [ ((modm, xK_F12), spawn "xtrlock")
              , ((modm, xK_o), spawn "opera")
+             , ((modm, xK_v), spawn "vivaldi")
              , ((modm, xK_e), spawn "emacs --font 'Bitstream Vera Sans Mono-14'")
              , ((modm, xK_c), spawn "xclock")
              , ((modm, xK_i), spawn "/home/tbje/eclipse/eclipse")
              , ((modm, xK_u), spawn "chromium")
+             , ((modm, xK_0), spawn "/usr/bin/xmodmap ~/.Xmodmap")
              ]
              ++
              [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))

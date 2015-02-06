@@ -1,8 +1,8 @@
-(defun sbt-send (what) 
-  "send somthing to sbt process" 
+(defun sbt-send (what)
+  "send somthing to sbt process"
   (process-send-string "sbt" what)
 )
- 
+
 (defun console-quick ()
   "send command to sbt console"
   (interactive)
@@ -13,6 +13,13 @@
   "send command to sbt console"
   (interactive)
   (sbt-send "console\n")
+)
+
+(defun sbt-console ()
+  "send command to sbt console"
+  (interactive)
+  (ensime-sbt)
+  (console)
 )
 
 (defun zermex-console ()
@@ -44,6 +51,12 @@
   (sbt-send "\t")
 )
 
+(defun console-exit-paste ()
+  ""
+  (interactive)
+  (sbt-send "\z")
+)
+
 (defun trim-string (string)
   "Remove white spaces in beginning and ending of STRING.
    White space here is any of: space, tab, emacs newline (line feed, ASCII 10)."
@@ -57,14 +70,14 @@
 )
 
 (defun extract-types () ""
-  (interactive) 
+  (interactive)
   (let (beg end)
     (if (region-active-p)
         (setq beg (region-beginning) end (region-end))
       (setq beg (line-beginning-position) end (+ 1 (line-end-position))))
     (kill-new (extract-types-x (buffer-substring beg end)))))
 
-(defun extract-types-x (str) "" 
+(defun extract-types-x (str) ""
 (let* ((in-parens (apply 'concat (cdr (split-string str "("))))
   (new (split-string in-parens ","))
   (strings (mapcar (lambda (x) (car (split-string (trim-string (cadr (split-string x ":"))) "[ |[]")) ) new))
@@ -84,6 +97,6 @@
 ;;(defun go-to-sbt-console (beg end)
 ;;  "send command to sbt console"
 ;;  (interactive)
-;;  (mapcar (function buffer-name) (buffer-list)) 
+;;  (mapcar (function buffer-name) (buffer-list))
 ;;  (switch-to-buffer ("sbt" (replace-regexp-in-string "\t" "    " (buffer-substring beg end)))
 ;;)
