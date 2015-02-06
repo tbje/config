@@ -73,6 +73,6 @@ PWD is not in a git repo (or the git command is not found)."
 
 (add-hook 'eshell-mode-hook
           '(lambda nil
-             (eshell/export "EDITOR=emacsclient -n")
-             (eshell/export "VISUAL=emacsclient -n")
+             (eshell/export "EDITOR=emacsclient")
+             (eshell/export "VISUAL=emacsclient")
              (eshell/eval "ssh-agent")))
