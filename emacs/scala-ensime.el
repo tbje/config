@@ -6,6 +6,40 @@
 ;;(use-package ensime :pin melpa-stable)
 
 
+(defun ensime-import-fully-replace ()
+  "Replace a types fully qualified name by it's simple name and add an import."
+  (interactive)
+  (let ((pack-path (ensime-package-path-at-point)))
+
+    (cond ((ensime-visiting-java-file-p)
+	   (ensime-inspect-java-type-at-point))
+
+	  (t ;; inspect package if package under point
+	   (if pack-path (ensime-inspect-package-by-path pack-path)
+	     ;; otherwise, inspect type
+	     (let* ((inspect-info (ensime-type-inspect-info-at-point))
+                    (type (plist-get inspect-info :type))
+                    (full (ensime-get-type-at-point))
+                    (name (plist-get type :name)))
+               (let ((endx (re-search-backward "\\."))
+                     (startx (re-search-backward " \\|,")))
+                 (message "%s %s %s %s" startx endx name full)
+                 (delete-region (+ startx 1) (+ endx 1)))
+               (ensime-insert-import full)
+               (forward-word)
+               ))))))
+
+
+(defun ensime-strip-fully-class ()
+  "Replace a types fully qualified name by it's simple name and add an import."
+  (interactive)
+  (let ((endx (re-search-backward "\\."))
+        (startx (re-search-backward " \\|,")))
+    (delete-region (+ startx 1) (+ endx 1)))
+  (forward-word))
+
+
+
 ;; Give SBT some power
 (setenv "JVM_OPTS"
 "-Dfile.encoding=UTF8 -XX:MaxPermSize=2g -Xms1g -Xmx2g -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC")
@@ -67,6 +101,7 @@
 
 
 (defun ensime-delete-port-file ()
+  (interactive)
   (let* ((config-file (ensime-config-find-file (buffer-file-name)))
          (config (ensime-config-load config-file))
          (cache-dir (file-name-as-directory (plist-get config :cache-dir)))
@@ -208,6 +243,10 @@
   (delq nil (mapcar (lambda (b) (if (string-prefix-p "*inferior-ensime-server" (buffer-name b)) b nil)) (buffer-list)))
 )
 
+(defun eshell-start-sbt ()
+  (let ((sbt:buffer-project-root nil))
+    (sbt-start)))
+
 (defun find-workspace (buffer)
   (with-current-buffer buffer
     (progn
@@ -267,7 +306,6 @@
   (let* ((dir default-directory)
          (pname (replace-regexp-in-string "\/" "." dir)))
     (insert (concat "package " pname))))
-
 
 (defun package-to-file-name (package)
   (replace-regexp-in-string "\\." "\/" package))
