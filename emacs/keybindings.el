@@ -1,18 +1,33 @@
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+(add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
+
 (global-unset-key (kbd "C-c C-u"))
 (global-unset-key (kbd "C-c C-c"))
 (global-unset-key (kbd "C-x C-z"))
+(global-set-key (kbd "C-c s") 'helm-sbt-complete)
 (global-set-key (kbd "C-c C-u") 'uncomment-region)
 (global-set-key (kbd "C-c C-c") 'comment-region)
 (global-set-key (kbd "C-x '") 'next-error)
-(global-set-key (kbd "C-c C-f") 'find-function)
+;(global-set-key (kbd "C-c C-f") 'find-function)
+
 (global-unset-key (kbd "M-DEL"))
+(global-set-key (kbd "C-c C-s") 'search-selection)
+(global-set-key (kbd "C-h F") 'find-function-at-point)
+(global-set-key (kbd "C-c {") 'move-curly-up)
+(global-set-key (kbd "C-x C-c") 'save-bookmark-before-kill)
+(global-set-key (kbd "C-c C-p") 'project)
+(global-set-key (kbd "C-c C-v I") 'ensime-import-fully-replace)
+(global-set-key (kbd "C-c C-v s") 'ensime-strip-fully-class)
 (global-set-key (kbd "M-DEL") 'backward-kill-sexp)
-
-
+(global-set-key (kbd "C-c C-b C-r") 'ensime-sbt-do-repl)
+(global-set-key (kbd "C-c C-b m") 'ensime-sbt-do-run-main)
+(global-set-key (kbd "C-c C-b C-m") 'ensime-sbt-do-run-last-main)
+(global-set-key (kbd "C-h C-f") 'find-function)
 (defun power-off () "" (interactive)(shell-command "power-off"))
 
 (global-set-key (kbd "C-c C-q") 'shut-down-cmd)
 (global-set-key (kbd "C-c C-d p") 'ensime-sbt-do-compile)
+
 
 (global-set-key (kbd "C-c C-o") 'ocr)
 
@@ -21,6 +36,7 @@
 
 
 (global-set-key (kbd "C-c g") 'google)
+(global-set-key (kbd "C-c g") 'helm-google)
 (global-set-key (kbd "C-c b") 'helm-bookmarks)
 (global-set-key (kbd "C-c c") 'org-capture)
 ;(global-unset-key (kbd "C-c c"))
@@ -35,6 +51,8 @@
 (global-set-key (kbd "S-C-Y") 'yank-primary)
 
 (global-set-key (kbd "M-x") 'helm-M-x)
+(global-unset-key (kbd "C-x b"))
+(global-set-key (kbd "C-x b") 'helm-buffers-list)
 
 (when (eq system-type 'gnu/linux)
    ;;(setq x-super-keysym 'meta) ;; Use windows as meta
@@ -75,12 +93,14 @@
 (global-set-key (kbd "M-<down>") 'move-text-down)
 
 (global-set-key (kbd "C-c C-v q") 'ensime-mode)
-(global-set-key (kbd "C-c C-p s") 'split-imports)
-(global-set-key (kbd "C-c C-p c") 'combine-imports)
-(global-set-key (kbd "C-c C-p i") 'ignore-import)
-(global-set-key (kbd "C-c C-p e") 'ediff-current-file)
+(global-set-key (kbd "C-c C-t s") 'split-imports)
+(global-set-key (kbd "C-c C-t c") 'combine-imports)
+(global-set-key (kbd "C-c C-t i") 'ignore-import)
+(global-set-key (kbd "C-c C-t e") 'ediff-current-file)
 (global-set-key (kbd "C-c C-e") 'eval-and-replace)
+
 (global-set-key (kbd "C-c C-p h") 'replace-digit-with-month)
+(global-set-key (kbd "C-c C-k") 'eval-kill-ring)
 
 ;; git-backup
 (global-unset-key (kbd "C-b"))
@@ -144,6 +164,8 @@
 (global-set-key (kbd "C-x '") 'next-error)
 
 (global-set-key (kbd "s-g") 'rgrep)
+(global-set-key (kbd "C-c m") 'mc/edit-lines)
+;(global-set-key (kbd "M-g") 'rgrep)
 
 (global-set-key (kbd "C-'") 'er/expand-region)
 
@@ -183,6 +205,16 @@
 (global-unset-key (kbd "<f5>"))
 (global-set-key (kbd "<f5>") 'revert-buffer-force)
 
+(defun scroll-up-other-1 ()
+  (interactive)
+  (smooth-scroll/scroll-other-window 1))
+(defun scroll-down-other-1 ()
+  (interactive)
+  (smooth-scroll/scroll-other-window-down 1))
+(global-set-key (kbd "C-s-ø") 'scroll-down-other-1)
+(global-set-key (kbd "C-s-æ") 'scroll-up-other-1)
+
+
 (defun revert-buffer-force () (interactive (revert-buffer t t)))
 (global-set-key (kbd "<f6>") 'scala-rgrep)
 (global-set-key (kbd "M-<f6>") 'play-template-rgrep)
@@ -201,6 +233,12 @@
        (if active
            (buffer-substring-no-properties start end)
          (read-from-minibuffer "Search for: ")))
+
+(defun find-string-active (active start end other) ""
+       (interactive)
+       (if active
+           (buffer-substring-no-properties start end)
+         (eval other)))
 
 (defun case-class-rgrep (start end)
   "Print number of lines and characters in the region."
