@@ -23,9 +23,6 @@
                          (str-convert rates 'NOK 'CHF)
                          (str-convert rates 'CHF 'NOK)) "\n")))))))
 
-
-
-
 (defun get-exchange ()
   "Get latest exchange rates"
   (request
@@ -133,6 +130,5 @@
 ;;(eur-nok 1000)
 
 ;; (nok-chf-d 1641 "2015-12-31") (67867.68708137327
-
 ;;(get-exchange-date "2015-05-13")
 ;;(get-exchange)
