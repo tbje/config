@@ -26,6 +26,12 @@
   (wrap-in beg end "${" "}")
 )
 
+(defun wrap-in-parens (beg end)
+  "wrap some marked area in an ()"
+  (interactive "r")
+  (wrap-in beg end "(" ")")
+)
+
 
 (defun wrap-in-string (beg end)
   "wrap some marked area in an Option[txt]"

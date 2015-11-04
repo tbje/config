@@ -1,5 +1,8 @@
+
 (setq eshell-history-size 1024)
 (setq eshell-prompt-regexp "^.* λ ")
+
+;(setq eshell-prompt-regexp "^[^λ]* λ ")
 
 ;;; Select a random sig as the eshell banner.
 ;; (let ((sigfile (concat *my-pim-dir* "signatures")))
@@ -23,6 +26,12 @@
 
 (defun eshell/mail (&rest args)
   (mu4e))
+
+(defun eshell-new-tab (s)
+  (interactive "sName old buffer: ")
+  (with-current-buffer "*eshell*"
+    (rename-buffer s)
+    (eshell)))
 
 ;;; ---- path manipulation
 
@@ -78,6 +87,9 @@ PWD is not in a git repo (or the git command is not found)."
 
 (add-hook 'eshell-mode-hook
           '(lambda nil
+             (define-key eshell-mode-map (kbd "C-c n") 'eshell-new-tab)
+             (define-key eshell-mode-map (kbd "C-c C-p") 'project)
              (eshell/export "EDITOR=emacsclient")
-             (eshell/export "VISUAL=emacsclient")))
-;;             (eshell/eval "ssh-agent")))
+             (eshell/export "VISUAL=emacsclient")
+             (call-process-shell-command "ssh-agent")))
+;;             (eshell-eval (eshell-parse-command "ssh-agent"))))

@@ -151,6 +151,40 @@ Chromium."
   (interactive)
   (find-file "~/todo.org"))
 
+(require 'nexus)
+
+
+ (defun clipboard-yank-2 ()
+  "Insert the primary selection at the position clicked on.
+Move point to the end of the inserted text, and set mark at
+beginning.  If `mouse-yank-at-point' is non-nil, insert at point
+regardless of where you click."
+  (interactive)
+  ;; Give temporary modes such as isearch a chance to turn off.
+  ;; Without this, confusing things happen upon e.g. inserting into
+  ;; the middle of an active region.
+  (let ((primary
+         (if (fboundp 'x-get-selection-value)
+             (if (eq (framep (selected-frame)) 'w32)
+                 ;; MS-Windows emulates PRIMARY in x-get-selection, but not
+                 ;; in x-get-selection-value (the latter only accesses the
+                 ;; clipboard).  So try PRIMARY first, in case they selected
+                 ;; something with the mouse in the current Emacs session.
+                 (or (x-get-selection 'PRIMARY)
+                     (x-get-selection-value))
+               ;; Else MS-DOS or X.
+               ;; On X, x-get-selection-value supports more formats and
+               ;; encodings, so use it in preference to x-get-selection.
+               (or (x-get-selection-value)
+                   (x-get-selection 'PRIMARY)))
+           ;; FIXME: What about xterm-mouse-mode etc.?
+           (x-get-selection 'PRIMARY))))
+    (unless primary
+      (error "No selection is available"))
+    (push-mark (point))
+    (insert-for-yank primary)))
+
+
 (setq exec-path (append exec-path '("~/bin")))
 
 (defun delete-file-current-buffer ()
@@ -931,7 +965,6 @@ based on existing mode bits, as in \"og+rX-w\"."
 
 (add-hook 'markdown-mode 'display-all)
 
-
 (defun accounting ()
   (interactive)
   (find-file "~/tbjesoft/src/main/scala/tbje/model/expenses/Year2017.scala")
@@ -970,6 +1003,44 @@ based on existing mode bits, as in \"og+rX-w\"."
 
 
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+
+(defun eshell-emit-prompt ()
+  "Emit a prompt if eshell is being used interactively."
+  (run-hooks 'eshell-before-prompt-hook)
+  (if (not eshell-prompt-function)
+      (set-marker eshell-last-output-end (point))
+    (let* ((prompt (funcall eshell-prompt-function))
+           (len (length prompt)))
+      (and eshell-highlight-prompt
+          (add-text-properties 0 (1- len)
+                               '(read-only t
+                                 face eshell-prompt)
+                               prompt)
+           (add-text-properties (1- len) len
+				'(read-only t
+				  face eshell-prompt
+				  rear-nonsticky (face read-only))
+				prompt))
+      (eshell-interactive-print prompt)))
+  (run-hooks 'eshell-after-prompt-hook))
+
+(defun save-bookmark-before-kill ()
+  (interactive)
+  (progn
+    (save-bmk-bmenu-state-file)
+    (save-buffers-kill-terminal)))
+
+
+(defun save-bmk-bmenu-state-file ()
+  (if (get-buffer ".emacs-bmk-bmenu-state.el")
+      (progn
+        (message "exists")
+        (with-current-buffer ".emacs-bmk-bmenu-state.el"
+          (save-buffer)))))
+
+(save-bmk-bmenu-state-file)
+
+(add-hook 'kill-emacs-hook 'save-bmk-bmenu-state-file)
 
 (setq erc-server-history-list '("https://moxie.typesafe.com:6697"))
 
@@ -1034,6 +1105,26 @@ based on existing mode bits, as in \"og+rX-w\"."
   (interactive )
   (untabify (point-min) (point-max)))
 
+
+(defun search-selection (beg end)
+  "search for selected text"
+  (interactive "r")
+  (let (
+        (selection (buffer-substring-no-properties beg end))
+        )
+    (deactivate-mark)
+    (isearch-mode t nil nil nil)
+    (isearch-yank-string selection)
+    )
+  )
+
+(fset 'move-curly-up
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([67108896 19 123 left 23 backspace backspace 31 32 5 right] 0 "%d")) arg)))
+
+(defun untabify-buffer ()
+  (interactive )
+  (untabify (point-min) (point-max)))
+
 (defun eval-and-replace ()
   "Replace the preceding sexp with its value."
   (interactive)
@@ -1044,6 +1135,7 @@ based on existing mode bits, as in \"og+rX-w\"."
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
 
+<<<<<<< HEAD
 (defun display-all () ""
   (interactive)
   (progn
@@ -1224,6 +1316,18 @@ based on existing mode bits, as in \"og+rX-w\"."
 
 
 (setq doc-view-mode-hook nil)
+
+;(defun eval-kill-ring ()
+;  "Replace the preceding sexp with its value."
+; (interactive)
+; (backward-kill-sexp)
+; (condition-case nil
+;     (let ((k (current-kill 0)))
+;       (kill-new (format "%s" (eval (read k))))
+;       (insert k))
+;   (error (message "Invalid expression")
+;          (insert (current-kill 0)))))
+
 (defun save-no-hooks () "Do not remove trailing whitespaces when saving..."
   (interactive)
   (let ((before-save-hook (remove 'delete-trailing-whitespace before-save-hook))) (save-buffer)))
@@ -1324,6 +1428,14 @@ based on existing mode bits, as in \"og+rX-w\"."
     (candidates . my-projects)
     (action . (
                ("Helm" .       (lambda (dir) (go-to-project-and-browse dir)))
+               ("Helm Browse Proeject" . (lambda (dir)
+                                           (progn
+                                             (cd dir)
+
+                                           ;;(let ((default-directory (expand-file-name dir))
+                                           ;;      (helm-default-directory dir))
+                                           ;;  (message "helm root: %s - curr %s" (helm-ls-git-root-dir) (fboundp 'helm-ls-git-root-dir))
+                                             (helm-browse-project t))))
                ("Jump" .       (lambda (dir) (cd dir)))
                ("Git status" . (lambda (dir) (git-status dir)))
                ("Git log" .    (lambda (dir) (git-log dir)))
@@ -1407,6 +1519,8 @@ based on existing mode bits, as in \"og+rX-w\"."
                                      "import scala.concurrent.duration._"
                                      "import akka.util.{ ByteString => BS, CompactByteString => CBS }"
                                      "def receive: Receive = { \ncase _ => \n}"
+                                     "import com.efgfp.teleios.util._"
+                                     "def receive: Receive = { case _ => }"
                                      "system.settings.config.get"
                                      )))
          (sources   '((name . "Scala common")
@@ -1455,6 +1569,7 @@ based on existing mode bits, as in \"og+rX-w\"."
   (let ((str (find-string-active (region-active-p) start end (substring-no-properties (current-kill 0)))))
     (sbt:command (concat "groll move=" (read-from-minibuffer "Go to: " str)))))
 
+
 ;(defun pinentry-emacs (desc prompt ok error)
 ;  (let ((str (read-passwd (concat (replace-regexp-in-string "%22" "\"" (replace-regexp-in-string "%0A" "\n" desc)) prompt ": "))))
 ;    str))
@@ -1487,7 +1602,6 @@ based on existing mode bits, as in \"og+rX-w\"."
          (command (concat "runMain" " " cleaned-class)))
     (setq last-run cleaned-class)
     (sbt-command command)))
-
 
 (defun rename-sub-file ()
   (interactive)
