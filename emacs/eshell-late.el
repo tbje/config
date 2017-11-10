@@ -18,11 +18,6 @@
 
 (defun eshell/ef (fname-regexp &rest dir) (ef fname-regexp default-directory))
 
-(defun eshell/d (&rest args)
-  (dired "."))
-
-(defun eshell/mail (&rest args)
-  (mu4e))
 
 ;;; ---- path manipulation
 
@@ -79,5 +74,5 @@ PWD is not in a git repo (or the git command is not found)."
 (add-hook 'eshell-mode-hook
           '(lambda nil
              (eshell/export "EDITOR=emacsclient")
-             (eshell/export "VISUAL=emacsclient")))
-;;             (eshell/eval "ssh-agent")))
+             (eshell/export "VISUAL=emacsclient")
+             (eshell/eval "ssh-agent")))

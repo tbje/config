@@ -9,6 +9,11 @@
 
 (defun su-find-file (f)
   "nice to use with bookmark+, i.e. (file-handler . su-find-file) will open the file as su"
-  (with-current-buffer
-      (find-file f)
-    (su-edit)))
+  (find-file (concat "/sudo::" f)))
+
+(defun su-find ()
+  "nice to use with bookmark+, i.e. (file-handler . su-find-file) will open the file as su"
+  (interactive)
+  (let ((file (car (find-file-read-args "Find file: "
+                        (confirm-nonexistent-file-or-buffer)))))
+    (find-file (concat "/sudo::" file))))

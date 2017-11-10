@@ -4,20 +4,36 @@
 (global-set-key (kbd "C-c C-u") 'uncomment-region)
 (global-set-key (kbd "C-c C-c") 'comment-region)
 (global-set-key (kbd "C-x '") 'next-error)
+(global-set-key (kbd "C-c C-f") 'find-function)
+(global-unset-key (kbd "M-DEL"))
+(global-set-key (kbd "M-DEL") 'backward-kill-sexp)
 
-(defun shut-down-cmd () "" (interactive)(shell-command "power-off"))
+
+(defun power-off () "" (interactive)(shell-command "power-off"))
 
 (global-set-key (kbd "C-c C-q") 'shut-down-cmd)
 (global-set-key (kbd "C-c C-d p") 'ensime-sbt-do-compile)
 
+(global-set-key (kbd "C-c C-o") 'ocr)
+
+(global-unset-key (kbd "C-s"))
+(global-set-key (kbd "C-s") 'search-selection)
+
+
 (global-set-key (kbd "C-c g") 'google)
 (global-set-key (kbd "C-c b") 'helm-bookmarks)
-(global-set-key (kbd "C-c c") 'find-config)
+(global-set-key (kbd "C-c c") 'org-capture)
+;(global-unset-key (kbd "C-c c"))
 (global-set-key (kbd "C-c f") 'helm-find-files)
 (global-set-key (kbd "C-c w") 'eww)
 (global-set-key (kbd "C-c i") 'helm-scala-complete)
 (global-set-key (kbd "C-c e") 'eshell)
+;(global-set-key (kbd "C-e e") 'eshell)
 (global-set-key (kbd "C-c p") 'helm-browse-project)
+
+(global-unset-key (kbd "S-C-y"))
+(global-set-key (kbd "S-C-Y") 'yank-primary)
+
 (global-set-key (kbd "M-x") 'helm-M-x)
 
 (when (eq system-type 'gnu/linux)
@@ -64,16 +80,17 @@
 (global-set-key (kbd "C-c C-p i") 'ignore-import)
 (global-set-key (kbd "C-c C-p e") 'ediff-current-file)
 (global-set-key (kbd "C-c C-e") 'eval-and-replace)
+(global-set-key (kbd "C-c C-p h") 'replace-digit-with-month)
 
 ;; git-backup
-(global-unset-key (kbd "C-b")
+(global-unset-key (kbd "C-b"))
 (global-unset-key (kbd "C-b C-b"))
 (global-unset-key (kbd "C-b C-r"))
 (global-set-key (kbd "C-b C-b") 'backup-for-git)
 (global-set-key (kbd "C-b C-r") 'recover-for-git)
 
 ;; multi-cursors
-(global-set-key (kbd "s-ø") 'mc/edit-lines)
+(global-set-key (kbd "C-c m") 'mc/edit-lines)
 (global-set-key (kbd "s-æ") 'mc/mark-all-like-this)
 (global-set-key (kbd "s-å") 'mc/mark-sgml-tag-pair)
 
@@ -113,6 +130,7 @@
 
 ;; expand-region
 (global-set-key (kbd "C-.") 'er/expand-region)
+(global-set-key (kbd "C-\-") 'er/contract-region)
 
 (global-set-key (kbd "s-e") 'send-to-mysql)
 
@@ -154,9 +172,18 @@
 (require 'smooth-scroll)
 (global-set-key (kbd "s-ø") 'scroll-down-1)
 (global-set-key (kbd "s-æ") 'scroll-up-1)
+(defun scroll-down-other-1 () "" (interactive) (smooth-scroll/scroll-other-window-down 1))
+(defun scroll-up-other-1 () "" (interactive) (smooth-scroll/scroll-other-window 1))
+(global-unset-key (kbd "C-s-ø"))
+(global-set-key (kbd "C-s-ø") 'scroll-down-other-1)
+(global-unset-key (kbd "C-s-æ"))
+(global-set-key (kbd "C-s-æ") 'scroll-up-other-1)
 
 
-(global-set-key (kbd "<f5>") 'revert-buffer)
+(global-unset-key (kbd "<f5>"))
+(global-set-key (kbd "<f5>") 'revert-buffer-force)
+
+(defun revert-buffer-force () (interactive (revert-buffer t t)))
 (global-set-key (kbd "<f6>") 'scala-rgrep)
 (global-set-key (kbd "M-<f6>") 'play-template-rgrep)
 (global-set-key (kbd "M-<f7>") 'case-class-rgrep)

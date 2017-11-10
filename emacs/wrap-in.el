@@ -14,6 +14,12 @@
   (wrap-in beg end "Option[" "]")
 )
 
+(defun wrap-in-par (beg end)
+  "wrap some marked area in an Option[txt]"
+  (interactive "r")
+  (wrap-in beg end "(" ")")
+)
+
 (defun wrap-in-interpol (beg end)
   "wrap some marked area in an Option[txt]"
   (interactive "r")
@@ -34,8 +40,3 @@
          (name (concat "val " id " = Id(\"" id "\")")))
     (kill-new name)
     (sbt-send (concat name "\n"))))
-
-
-
-
-

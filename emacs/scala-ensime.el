@@ -1,17 +1,46 @@
 
-(add-to-list 'load-path "~/ensime-emacs/")
-(require 'ensime)
+;(add-to-list 'load-path "~/ensime-emacs/")
+;(require 'ensime)
+(setq ensime-startup-snapshot-notification nil)
+(setq ensime-startup-notification nil)
+;;(use-package ensime :pin melpa-stable)
+
 
 ;; Give SBT some power
 (setenv "JVM_OPTS"
 "-Dfile.encoding=UTF8 -XX:MaxPermSize=2g -Xms1g -Xmx2g -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC")
+
+(defun ensime-run ()
+  (interactive)
+  (sbt-command "run" t))
+
+
+(defun add-annotation ()
+  "Add type annotation to current symbol."
+  (interactive)
+  (let ((line (line-number-at-pos)))
+    (save-excursion
+      (beginning-of-line)
+      (re-search-forward " =")
+      (if (= (line-number-at-pos) line)
+          (progn
+            (backward-char 2)
+            (let* ((type (ensime-rpc-get-type-at-point))
+                   (shortname (ensime-type-name-with-args type)))
+              (while (let ((current-char (thing-at-point 'char)))
+                       (or (equal "(" current-char) (equal "[" current-char)))
+                (forward-list))
+              (insert (concat ": " shortname))))
+  (message "Didn't find anywhere to insert type annotation.")))))
+
 
 ;; Scala mode
 (add-to-list 'load-path "~/scala-mode2/")
 (require 'scala-mode2)
 
 ;; ENSIME
-(add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
+;(add-to-list 'auto-mode-alist '("\\.scala$" . scala-mode))
+
 ;;(add-to-list 'auto-mode-alist '("\\.console$" . scala-mode))
 
 (defun parent-directory (dir)
@@ -21,20 +50,20 @@
 (defun is-project-file (full-file-name) "Find out if file is in the sbt project dir (== project)"
   (string= (file-name-nondirectory (substring (file-name-directory full-file-name) 0 -1)) "project"))
 
-(defun is-ensime-file (path) ""
-  (if (endp (directory-files path nil "\.ensime$"))
-      (let ((parent (parent-directory path)))
-        (if parent (is-ensime-file parent) nil))
-      t))
+;(defun is-ensime-file (path) ""
+;  (if (endp (directory-files path nil "\.ensime$"))
+;      (let ((parent (parent-directory path)))
+;        (if parent (is-ensime-file parent) nil))
+;      t))
 
-(defun find-if-ensime () "find out if in ensime project"
-  (interactive)
-  (let ((current-file (buffer-file-name)))
-    (if (and current-file (file-exists-p current-file)) (is-ensime-file (parent-directory current-file)) nil)))
+;(defun find-if-ensime () "find out if in ensime project"
+;  (interactive)
+;  (let ((current-file (buffer-file-name)))
+;    (if (and current-file (file-exists-p current-file)) (is-ensime-file (parent-directory current-file)) nil)))
 
-(defun find-ensime-cofnig-file () ""
-  (interactive)
-  (message "%s" (ensime-config-find-file (buffer-file-name))))
+;(defun find-ensime-cofnig-file () ""
+;  (interactive)
+;  (message "%s" (ensime-config-find-file (buffer-file-name))))
 
 
 (defun ensime-delete-port-file ()
@@ -45,17 +74,17 @@
     (delete-file port-file)))
 
 ;;(setq scala-mode-hook nil)
-(add-hook 'scala-mode-hook
-          '(lambda ()
-             (unless (find-if-ensime) (message "No ensime file detected"))
-             (when (find-if-ensime)
-               (progn
-                 (unless (ensime-connected-p) ;; (buffer-file-name)
-                   (message "Ensime not running for %s" (ensime-connected-p)))
-                   ;;(ensime--2 (ensime-config-find-file (buffer-file-name)))) ;; TODO: Try to find ensime file and use it, if not drop it.
-                 (ensime-mode)))
-             ;;(yas-minor-mode)
-             (subword-mode 1)))
+;;(add-hook 'scala-mode-hook
+;;          '(lambda ()
+;;             (unless (find-if-ensime) (message "No ensime file detected"))
+;;             (when (find-if-ensime)
+;;               (progn
+;;                 (unless (ensime-connected-p) ;; (buffer-file-name)
+;;                   (message "Ensime not running for %s" (ensime-connected-p)))
+;;                   ;;(ensime--2 (ensime-config-find-file (buffer-file-name)))) ;; TODO: Try to find ensime file and use it, if not drop it.
+;;                 (ensime-mode)))
+;;             ;;(yas-minor-mode)
+;;             (subword-mode 1)))
 
 ;;             (local-set-key (kbd "RET")
 ;;                            '(lambda ()
@@ -73,8 +102,7 @@
 
 (defun restart-server ()
   (interactive)
-  (ensime-sbt-switch)
-  (ensime-sbt-action "restart"))
+  (sbt-command "restart"))
 
 (defun db-run ()
   (interactive)
@@ -86,10 +114,72 @@
   (ensime-sbt-switch)
   (ensime-sbt-action "reload"))
 
-(defun sbt-test ()
+(defun reload-sbt ()
   (interactive)
   (ensime-sbt-switch)
-  (ensime-sbt-action "test"))
+  (ensime-sbt-action "reload"))
+
+(defun koan-next ()
+  (interactive)
+  (sbt-command "koan next"))
+
+(defun console ()
+  (interactive)
+  (sbt-command "console"))
+
+(defun comp ()
+  (interactive)
+  (sbt-command "compile"))
+
+(defun koan-prev ()
+  (interactive)
+  (sbt-command "koan prev"))
+
+(defun groll-next ()
+  (interactive)
+  (let ((properties "/home/tbje/scalatrain/.koan.properties")
+        (backup "/home/tbje/.koan.properties"))
+    (when (file-exists-p properties)
+      (copy-file properties backup t))
+    (sbt-command "groll next")
+    (sleep-for 0 100)
+    (when (file-exists-p backup)
+      (copy-file backup properties))))
+
+(defun groll-list ()
+  (interactive)
+  (sbt-command "groll list"))
+
+(defun groll-initial ()
+  (interactive)
+  (if (file-exists-p "/home/tbje/scalatrain/.koan.properties")
+      (delete-file "/home/tbje/scalatrain/.koan.properties"))
+  (sbt-command "groll initial"))
+
+(defun groll-prev ()
+  (interactive)
+  (copy-file "/home/tbje/scalatrain/.koan.properties" "/home/tbje/.koan.properties" t)
+  (sbt-command "groll prev")
+  (sleep-for 0 100)
+  (copy-file "/home/tbje/.koan.properties" "/home/tbje/scalatrain/.koan.properties" t))
+
+(defun switch-other-split (buffer-or-name &optional norecord)
+  (interactive
+   (list (read-buffer-to-switch "Switch to buffer in other frame: ")))
+  (split-window-vertically)
+  (pop-to-buffer buffer-or-name display-buffer--other-frame-action norecord))
+
+
+(defun groll-push ()
+  (interactive)
+  (let ((key "criteo"))
+  (sbt-command (concat "groll push=" key))
+  (message "koan pull=%s" key)))
+
+
+(defun man-e ()
+  (interactive)
+  (sbt-command "man e"))
 
 (defun ensime-generate ()
   (interactive)
@@ -176,9 +266,39 @@
   (interactive)
   (let* ((dir default-directory)
          (pname (replace-regexp-in-string "\/" "." dir)))
-    (insert (concat "packate " pname))))
+    (insert (concat "package " pname))))
 
-(global-set-key (kbd "C-c p") 'extract-package)
+
+(defun package-to-file-name (package)
+  (replace-regexp-in-string "\\." "\/" package))
+
+(defun strip-nl (str)
+  (replace-regexp-in-string "\n" "" str))
+
+(defun remove-package (str)
+  (replace-regexp-in-string "package *" "" str))
+
+(defun move-to-package (a b)
+  (interactive "r")
+  (let* (beg end nl)
+    (if (region-active-p)
+        (setq beg (region-beginning) end (region-end) nl (bolp))
+      (setq beg (line-beginning-position) end (line-end-position)) nl nil)
+    (let* ((file-rel (file-relative-name (buffer-file-name)))
+           (dir (file-name-directory (buffer-file-name)))
+           (package (remove-package (strip-nl (package-to-file-name (buffer-substring beg end)))))
+           (new-dir (format "%s%s" dir package))
+           (new-file (format "%s/%s" new-dir file-rel)))
+      (message new-file)
+      (if (not (file-directory-p new-dir))
+          (make-directory new-dir t))
+      (rename-file (buffer-file-name) new-file)
+      (kill-buffer)
+      (find-file new-file))))
+
+
+
+;(global-set-key (kbd "C-c p") 'extract-package)
 
 ;;(setq special-display-function nil)
 ;;(setq special-display-regexps '(""))

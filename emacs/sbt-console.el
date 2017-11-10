@@ -9,11 +9,6 @@
   (sbt-send "console-quick\n")
 )
 
-(defun console ()
-  "send command to sbt console"
-  (interactive)
-  (sbt-send "console\n")
-)
 
 (defun sbt-console ()
   "send command to sbt console"
@@ -35,6 +30,30 @@
   (sbt-send ":paste\n")
 )
 
+(defun ensime-sbt-do-console ()
+  (interactive)
+  (sbt-command "console"))
+
+(defun ensime-sbt-do-restart ()
+  (interactive)
+  (sbt-command "restart"))
+
+(defun koan-next ()
+  (interactive)
+  (sbt-command "koan next"))
+
+(defun test ()
+  (interactive)
+  (sbt-command "test"))
+
+(defun compile-s ()
+  (interactive)
+  (sbt-command "compile"))
+
+(defun native ()
+  (interactive)
+  (sbt-command "nativeLink"))
+
 (defun send-to-console ()
   "send command to sbt console"
   (interactive)
@@ -42,14 +61,20 @@
         (if (region-active-p)
             (setq beg (region-beginning) end (region-end))
             (setq beg (line-beginning-position) end (+ 1 (line-end-position))))
-        (sbt-send (replace-regexp-in-string "\t" "    " (buffer-substring beg end)))
-))
+        (sbt:send-region beg end)))
 
 (defun send-tab-to-console ()
   ""
   (interactive)
   (sbt-send "\t")
 )
+
+(defun send-enter-to-console ()
+  ""
+  (interactive)
+  (sbt:clear)
+)
+
 
 (defun console-exit-paste ()
   ""
