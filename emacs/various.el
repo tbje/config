@@ -539,6 +539,10 @@ Chromium."
   (interactive)
   (elisp-cmd-here "tagger2"))
 
+(defun ll-here ()
+  (interactive)
+  (ansi-here "ls -alF" "ll"))
+
 (defun ocr ()
   (interactive)
   (let ((res (shell-command-to-string "~/emacs-ocr/target/scala-2.11/emacs-ocr-out")))

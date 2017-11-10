@@ -8,7 +8,7 @@ Xft.rgba:       rgb
 Xft.hinting:    true
 Xft.hintstyle:  hintslight
 ! -- Fonts -- !
-URxvt*font: xft:DejaVu Sans Mono:pixelsize=20
+URxvt*font: xft:DejaVu Sans Mono:pixelsize=24
 
 !black
 *color0:  #251f1f
@@ -37,7 +37,7 @@ URxvt*font: xft:DejaVu Sans Mono:pixelsize=20
 
 XClock*foreground: #fbfbfb
 XClock*background: #000018
-XClock*face: xft:DejaVu Sans Mono:pixelsize=60
+XClock*face: xft:DejaVu Sans Mono:pixelsize=60 ! 60
 XClock*update: 1
 XClock*strftime: %T
 XClock*analog: false
