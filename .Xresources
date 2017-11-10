@@ -1,0 +1,32 @@
+!URxvt.depth: 32
+URxvt*background: #0f0f0f
+!URxvt*background:      #303030
+URxvt*perl-ext-common: font-size
+URxvt*keysym.C-Up:     perl:font-size:increase
+URxvt*keysym.C-Down:   perl:font-size:decrease
+!URxvt.keysym.C-Up:     font-size:increase
+!URxvt.keysym.C-Down:   font-size:decrease
+*background: #0f0f0f
+*foreground: #c8c8c8
+!-- Xft settings -- !
+!Xft.dpi:        96
+!Xft.antialias:  true
+!Xft.rgba:       rgb
+!Xft.hinting:    true
+!Xft.hintstyle:  hintslight
+!Xft.pixelsize:  15
+!Xft.size:       20
+! -- Fonts -- !
+!URxvt.font:xft:droid sans mono slashed:medium:pixelsize=11
+!URxvt.boldFont:xft:droid sans mono slashed:medium:pixelsize=11
+
+!urxvt.font:     xft:DejaVu Sans Mono:size=16
+!URxvt.font:     xft:Monaco!:Bold Oblique:pixelsize=20
+!URxvt*font: xft:DejaVu Sans Mono:pixelsize=35
+!URxvt*font: xft:Monospace:pixelsize=24.5
+URxvt*scrollBar_right: true
+!xterm*faceSize: 30
+!urxvt*font:     xft:Monaco:pixelsize=20:antialias=true:hinting=true:medium
+
+!rxvt.font: xft:Terminus:antialias=false:size=7
+!black
