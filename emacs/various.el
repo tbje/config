@@ -153,7 +153,6 @@ Chromium."
 
 (require 'nexus)
 
-
  (defun clipboard-yank-2 ()
   "Insert the primary selection at the position clicked on.
 Move point to the end of the inserted text, and set mark at
@@ -1059,7 +1058,7 @@ based on existing mode bits, as in \"og+rX-w\"."
 (defun search-selection ()
   "search for selected text or default to isearch-forward"
   (interactive)
-  (if (region-active-p)
+  (if (use-region-p)
       (let* ((beg (min (point) (mark)))
              (end (max (point) (mark)))
              (selection (buffer-substring-no-properties beg end))
@@ -1075,7 +1074,7 @@ based on existing mode bits, as in \"og+rX-w\"."
 (defun open-selected-file ()
   "search for selected text or default to isearch-forward"
   (interactive)
-  (if (region-active-p)
+  (if (use-region-p)
       (let* ((beg (min (point) (mark)))
              (end (max (point) (mark)))
              (dir (buffer-file-name))
@@ -1093,7 +1092,7 @@ based on existing mode bits, as in \"og+rX-w\"."
 (defun open-selected-file ()
   "search for selected text or default to isearch-forward"
   (interactive)
-  (if (region-active-p)
+  (if (use-region-p)
       (let* ((beg (min (point) (mark)))
              (end (max (point) (mark)))
              (dir (buffer-file-name))
@@ -1368,7 +1367,7 @@ based on existing mode bits, as in \"og+rX-w\"."
   "Deletes a line, but does not put it in the kill-ring. (kinda)"
   (interactive)
   (let (beg end)
-    (if (region-active-p)
+    (if (use-region-p)
         (setq beg (region-beginning) end (region-end))
       (setq beg (line-beginning-position) end (line-end-position)))
     (if (and (eq beg end) (< end (buffer-end 1)))
@@ -1566,7 +1565,7 @@ based on existing mode bits, as in \"og+rX-w\"."
 
 (defun groll-move (start end)
   (interactive "r")
-  (let ((str (find-string-active (region-active-p) start end (substring-no-properties (current-kill 0)))))
+  (let ((str (find-string-active (use-region-p) start end (substring-no-properties (current-kill 0)))))
     (sbt:command (concat "groll move=" (read-from-minibuffer "Go to: " str)))))
 
 
